@@ -56,3 +56,7 @@ curl -X DELETE http://localhost:3000/api/events/REPLACE_ID
 ```
 
 Capacity and waitlist operations currently use separate database queries: simultaneous requests can race. This prototype needs atomic reservation/transaction handling and further security hardening before real-world use. OAuth sign-in and Atlas/Render deployment require external configuration and must be verified in the target environment.
+
+### Google sign-in
+
+Create a Google OAuth web application, configure its consent screen, and add `https://your-app.example.com/auth/google/callback` as an authorized redirect URI (replace the origin with your app URL). Set `APP_BASE_URL`, `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in the hosting platform; do not commit real credentials. Google sign-in creates a student account for a new Google identity. Existing email/password and Microsoft accounts are not automatically linked; use their original sign-in method. Email/password registrations do not verify email addresses. Google sign-in requires Google to report a verified email.
