@@ -3,3 +3,5 @@
 .admin-actions{display:flex;gap:10px;flex-wrap:wrap}.filters label{flex:1;min-width:180px}.filters button,.filters>a{align-self:end}.record-edit{display:flex;align-items:end;gap:8px}.record-edit label{min-width:150px;font-size:.75rem}.success{padding:12px;background:#eaf7ee;color:#206738;border-radius:6px}@media(max-width:600px){.record-edit{width:100%}.record-edit label{flex:1}.filters button,.filters>a{align-self:auto}}
 
 .brand{display:inline-block;max-width:100%}.brand-logo{display:block;width:360px;max-width:100%;height:auto}.brand-logo[hidden],.brand-fallback[hidden]{display:none}@media(max-width:600px){.brand-logo{width:min(360px,calc(100vw - 48px))}}
+
+.google-button{display:flex;align-items:center;justify-content:center;gap:12px;min-height:48px;border:1px solid #b8c5d3;background:#fff;color:#24384e}.google-button:hover{background:#f4f7fa;border-color:#8192a7}.google-button:focus-visible{outline:3px solid #87aee0;outline-offset:2px}.google-icon{width:20px;height:20px;flex:none}
