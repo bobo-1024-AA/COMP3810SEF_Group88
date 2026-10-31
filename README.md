@@ -35,7 +35,7 @@ Register an application in Microsoft Entra, enable the `User.Read` delegated Mic
 
 ### SAO workflow
 
-Log in with the configured SAO account and open **SAO dashboard**. Use **Create event**, **Edit**, and **Remove** to manage events. Fill in the name, description, date and time, location, category, capacity, registration deadline, and hours. Optionally upload a JPG, PNG or WebP image (maximum 2 MB); it is stored in MongoDB and can be replaced or removed when editing. Times entered in the form are Hong Kong time. Use **Confirm** on pending registrations, then **Mark completed** after the event starts. Removal hides an event while preserving registration history. Increasing capacity promotes waitlisted students into pending places.
+Log in with the configured SAO account and open **SAO dashboard**. Use **Create event**, **Edit**, and **Remove** to manage events. Fill in the name, description, date and time, location, category, capacity, registration deadline, and hours. Optionally upload a JPG, PNG or WebP image (maximum 2 MB); it is stored in MongoDB and can be replaced or removed when editing. Times entered in the form are Hong Kong time. Use **Confirm** on pending registrations, then **Mark completed** after the event starts. Removal hides an event while preserving registration history. Increasing capacity promotes waitlisted students into pending places. Select **Student activity records** to search all students’ registrations, including cancelled registrations and removed events, and update a record’s status. A completed status requires that the event has started; statuses occupying a place cannot exceed event capacity. Releasing a place promotes the earliest waitlisted student for an upcoming active event.
 
 ### REST CRUD
 
