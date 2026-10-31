@@ -56,3 +56,9 @@ curl -X DELETE http://localhost:3000/api/events/REPLACE_ID
 ```
 
 Capacity and waitlist operations currently use separate database queries: simultaneous requests can race. This prototype needs atomic reservation/transaction handling and further security hardening before real-world use. OAuth sign-in and Atlas/Render deployment require external configuration and must be verified in the target environment.
+
+### Email verification and Google sign-in
+
+New student accounts must verify their email address before signing in. Configure `APP_BASE_URL` as the app's public origin without a trailing slash, `RESEND_API_KEY` as a Resend sending API key, and `EMAIL_FROM` as a sender on a domain verified in Resend. Verification links expire after 24 hours; the login page provides a resend form. Existing accounts retain their previous sign-in behavior.
+
+To enable Google sign-up and sign-in, create a Google OAuth web application, configure its consent screen and add `https://your-app.example.com/auth/google/callback` as an authorized redirect URI (replace the origin with `APP_BASE_URL`). Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`. A new Google account also receives an email verification link and can sign in after confirming it. Existing email/password and Microsoft accounts are not automatically linked to Google; use their original sign-in method. Microsoft-created student accounts also require email verification. Configure these values as secrets in the hosting platform; do not commit real credentials. Google consent configuration, Resend domain verification, and deployment environment variables must be completed before testing the live flow.
