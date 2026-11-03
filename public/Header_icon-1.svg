@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 110 69.35">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #f9f9f9;
+        font-family: CooperBlack-Italic, 'Cooper Black';
+        font-size: 36.23px;
+        font-style: italic;
+      }
+
+      .cls-2 {
+        filter: url(#drop-shadow-1);
+      }
+
+      .cls-3 {
+        fill: #48596f;
+      }
+
+      .cls-3, .cls-4, .cls-5 {
+        stroke-width: 0px;
+      }
+
+      .cls-4 {
+        fill: #defac1;
+      }
+
+      .cls-5 {
+        fill: #fbfbfb;
+      }
+    </style>
+    <filter id="drop-shadow-1" filterUnits="userSpaceOnUse">
+      <feOffset dx="2" dy="2"/>
+      <feGaussianBlur result="blur" stdDeviation="1.5"/>
+      <feFlood flood-color="#000" flood-opacity=".3"/>
+      <feComposite in2="blur" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="text">
+    <rect class="cls-4" x="0" y="19.35" width="110" height="50" rx="25" ry="25"/>
+    <text class="cls-1" transform="translate(29.82 35.57)"><tspan x="0" y="0">i</tspan></text>
+    <g class="cls-2">
+      <path class="cls-3" d="m59.2,12.64C53.2,1.14,39.02-3.33,27.52,2.66c-11.5,5.99-15.97,20.17-9.97,31.67,3.41,6.54,9.46,10.79,16.17,12.16l4.66,8.07,4.66-8.07c2.11-.43,4.19-1.13,6.19-2.18,11.5-5.99,15.97-20.17,9.97-31.67Z"/>
+      <path class="cls-5" d="m33.61,27.12c.15-.9.35-1.63.35-2.14s-.2-.78-.86-.78c-.58,0-1.52.04-1.52-1.36,0-1.67,1.79-2.41,3.07-2.96,1.83-.78,4.79-1.63,6.77-1.63,1.21,0,1.75.62,1.75,1.79,0,1.67-.58,4.98-.66,5.52-.08.43-.78,4.9-.97,6.42-.08.74.43.74,1.05.74.74,0,1.28.04,1.28.97,0,2.96-6.15,4.75-8.37,4.75-1.48,0-3.15-.9-3.15-2.53,0-.74.12-1.44.23-2.18l1.01-6.62Zm-.23-12.61c0-3.11,5.57-4.71,8.06-4.71,1.4,0,3.27.55,3.23,2.22-.04,2.84-5.49,4.79-7.82,4.63-1.32-.08-3.46-.43-3.46-2.14Z"/>
+    </g>
+  </g>
+</svg>
