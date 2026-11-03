@@ -27,7 +27,7 @@ const microsoftEnabled=Boolean(process.env.MICROSOFT_CLIENT_ID && process.env.MI
 if(microsoftEnabled){
  passport.use(new MicrosoftStrategy({clientID:process.env.MICROSOFT_CLIENT_ID,clientSecret:process.env.MICROSOFT_CLIENT_SECRET,callbackURL:process.env.MICROSOFT_CALLBACK_URL,tenant:process.env.MICROSOFT_TENANT_ID||'common',scope:['user.read'],addUPNAsEmail:true,state:true},async (_access,_refresh,profile,done)=>{try{let u=await User.findOne({microsoftId:profile.id});if(!u){const email=profile.emails?.[0]?.value?.toLowerCase().trim();if(!email)return done(null,false,{message:'Microsoft account did not provide an email.'});if(await User.findOne({email}))return done(null,false,{message:'An account with this email already exists. Use its original login method.'});u=await User.create({name:profile.displayName||email,email,microsoftId:profile.id,role:'student'});}return done(null,u)}catch(e){return done(e)}}));
  app.get('/auth/microsoft',passport.authenticate('microsoft',{session:false,state:true}));
- app.get('/auth/microsoft/callback',(req,res,next)=>passport.authenticate('microsoft',{session:false},(err,user,info)=>{if(err)return next(err);if(!user)return res.status(400).send(info?.message||'Microsoft sign-in failed.');req.session.regenerate(e=>{if(e)return next(e);req.session.userId=user.id;res.redirect('/events')})})(req,res,next));
+ app.get('/auth/microsoft/callback',(req,res,next)=>passport.authenticate('microsoft',{session:false},(err,user,info)=>{if(err)return next(err);if(!user)return res.status(400).send(info?.message||'Microsoft sign-in failed.');req.session.regenerate(e=>{if(e)return next(e);req.session.userId=user.id;res.redirect('/')})})(req,res,next));
 }
 app.use(async (req,res,next)=>{try{res.locals.user=req.session.userId ? await User.findById(req.session.userId).lean() : null; res.locals.categories=categories; res.locals.microsoftEnabled=microsoftEnabled; res.locals.googleEnabled=googleEnabled; res.locals.error=null; next();}catch(e){next(e)}});
 const auth=(req,res,next)=>res.locals.user?next():res.redirect('/login');
@@ -36,9 +36,9 @@ function eventUpload(req,res,next){upload(req,res,err=>{if(err)return res.status
 const sao=(req,res,next)=>res.locals.user?.role==='sao'?next():res.status(403).send('SAO access required');
 const asyncRoute=fn=>(req,res,next)=>Promise.resolve(fn(req,res,next)).catch(next);
 const page=(res,view,data={})=>res.render('layout',{view,...data});
-app.get('/',(req,res)=>res.redirect(res.locals.user?'/events':'/login'));
+app.get('/',(req,res)=>{if(!res.locals.user)return res.redirect('/login');if(res.locals.user.role!=='student')return res.redirect('/events');page(res,'home');});
 function baseUrl(){return process.env.APP_BASE_URL.replace(/\/$/,'')}
-function loginUser(req,res,next,user){req.session.regenerate(err=>{if(err)return next(err);req.session.userId=user.id;res.redirect('/events')})}
+function loginUser(req,res,next,user){req.session.regenerate(err=>{if(err)return next(err);req.session.userId=user.id;res.redirect(user.role==='student'?'/':'/events')})}
 app.get('/login',(req,res)=>page(res,'login'));
 app.post('/login',asyncRoute(async(req,res,next)=>{const u=await User.findOne({email:String(req.body.email||'').toLowerCase().trim()});if(!u||!u.password||!await bcrypt.compare(req.body.password||'',u.password)){res.locals.error='Incorrect email or password.';return res.status(400).render('layout',{view:'login'});}loginUser(req,res,next,u)}));
 app.get('/register',(req,res)=>page(res,'register'));
