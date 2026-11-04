@@ -21,13 +21,9 @@ Requires Node.js 20 or later and a MongoDB database (MongoDB Atlas is suitable).
 
 For Render, create a Node web service with `npm ci` as the build command and `npm start` as the start command. Set the variables above in Render's environment settings and configure MongoDB Atlas network access and database credentials according to your deployment. Set `NODE_ENV=production` for secure session cookies. Do not commit or share database connection strings. Deploying and connecting Atlas require your own accounts.
 
-### Microsoft sign-in
-
-Register an application in Microsoft Entra, enable the `User.Read` delegated Microsoft Graph permission, and configure a web redirect URI ending in `/auth/microsoft/callback`. Set `MICROSOFT_CLIENT_ID`, `MICROSOFT_CLIENT_SECRET`, `MICROSOFT_CALLBACK_URL` (the full registered URI), and optionally `MICROSOFT_TENANT_ID` (default `common`). Configure the supported account types and tenant according to your institution. The sign-in button appears when all three required Microsoft variables are set. Microsoft sign-in creates a student account; existing email/password accounts are not automatically linked. Microsoft credentials and a reachable Microsoft identity service are required to test this flow.
-
 ### Student workflow
 
-1. Create an account from the login page, or use Microsoft sign-in when configured. Log in to see the activities page.
+1. Create an account from the login page, or use Google or GitHub sign-in when configured. Log in to see the activities page.
 2. Search by activity name or filter by category. Select **Register** before the deadline. Registrations are pending SAO confirmation; when capacity is full they enter a first-come waitlist.
 3. Open **My activity** to view status and cancel a pending, confirmed, or waitlisted registration before the activity. When a place becomes free, the earliest waitlisted student moves to pending for SAO confirmation.
 4. SAO can mark confirmed registrations completed after the event time. Completed activities count toward both goals in their category: 5 hours and 5 distinct activities. These project goals are separate from official award criteria.
@@ -59,7 +55,7 @@ Capacity and waitlist operations currently use separate database queries: simult
 
 ### Google sign-in
 
-Create a Google OAuth web application, configure its consent screen, and add `https://your-app.example.com/auth/google/callback` as an authorized redirect URI (replace the origin with your app URL). Set `APP_BASE_URL`, `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in the hosting platform; do not commit real credentials. Google sign-in creates a student account for a new Google identity. Existing email/password and Microsoft accounts are not automatically linked; use their original sign-in method. Email/password registrations do not verify email addresses. Google sign-in requires Google to report a verified email.
+Create a Google OAuth web application, configure its consent screen, and add `https://your-app.example.com/auth/google/callback` as an authorized redirect URI (replace the origin with your app URL). Set `APP_BASE_URL`, `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in the hosting platform; do not commit real credentials. Google sign-in creates a student account for a new Google identity. Existing accounts are not automatically linked; use their original sign-in method. Email/password registrations do not verify email addresses. Google sign-in requires Google to report a verified email.
 
 ### GitHub sign-in
 

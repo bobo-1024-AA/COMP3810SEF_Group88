@@ -7,8 +7,6 @@ const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const path = require('path');
 const crypto = require('crypto');
-const passport = require('passport');
-const MicrosoftStrategy = require('passport-microsoft').Strategy;
 const app = express();
 const categories = ['Future Skills & Intelligence', 'Aesthetics & Spirituality', 'Igniting & Sports', 'Temperance & Justice', 'Humanity & Love'];
 const userSchema = new mongoose.Schema({ name: {type:String, required:true}, email:{type:String, required:true, unique:true, lowercase:true, trim:true}, password:{type:String}, microsoftId:{type:String,unique:true,sparse:true}, googleId:{type:String,unique:true,sparse:true}, githubId:{type:String,unique:true,sparse:true}, role:{type:String, enum:['student','sao'], default:'student'} });
@@ -21,16 +19,9 @@ const uri=process.env.MONGODB_URI;
 if (!uri || !process.env.SESSION_SECRET) { console.error('MONGODB_URI and SESSION_SECRET are required'); process.exit(1); }
 app.set('trust proxy',1);
 app.use(session({secret:process.env.SESSION_SECRET,resave:false,saveUninitialized:false,store:MongoStore.create({mongoUrl:uri}),cookie:{httpOnly:true,sameSite:'lax',secure:process.env.NODE_ENV==='production',maxAge:86400000}}));
-app.use(passport.initialize());
 const googleEnabled=Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && process.env.APP_BASE_URL);
 const githubEnabled=Boolean(process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET && process.env.APP_BASE_URL);
-const microsoftEnabled=Boolean(process.env.MICROSOFT_CLIENT_ID && process.env.MICROSOFT_CLIENT_SECRET && process.env.MICROSOFT_CALLBACK_URL);
-if(microsoftEnabled){
- passport.use(new MicrosoftStrategy({clientID:process.env.MICROSOFT_CLIENT_ID,clientSecret:process.env.MICROSOFT_CLIENT_SECRET,callbackURL:process.env.MICROSOFT_CALLBACK_URL,tenant:process.env.MICROSOFT_TENANT_ID||'common',scope:['user.read'],addUPNAsEmail:true,state:true},async (_access,_refresh,profile,done)=>{try{let u=await User.findOne({microsoftId:profile.id});if(!u){const email=profile.emails?.[0]?.value?.toLowerCase().trim();if(!email)return done(null,false,{message:'Microsoft account did not provide an email.'});if(await User.findOne({email}))return done(null,false,{message:'An account with this email already exists. Use its original login method.'});u=await User.create({name:profile.displayName||email,email,microsoftId:profile.id,role:'student'});}return done(null,u)}catch(e){return done(e)}}));
- app.get('/auth/microsoft',passport.authenticate('microsoft',{session:false,state:true}));
- app.get('/auth/microsoft/callback',(req,res,next)=>passport.authenticate('microsoft',{session:false},(err,user,info)=>{if(err)return next(err);if(!user)return res.status(400).send(info?.message||'Microsoft sign-in failed.');req.session.regenerate(e=>{if(e)return next(e);req.session.userId=user.id;res.redirect('/')})})(req,res,next));
-}
-app.use(async (req,res,next)=>{try{res.locals.user=req.session.userId ? await User.findById(req.session.userId).lean() : null; res.locals.categories=categories; res.locals.microsoftEnabled=microsoftEnabled; res.locals.googleEnabled=googleEnabled; res.locals.githubEnabled=githubEnabled; res.locals.error=null; next();}catch(e){next(e)}});
+app.use(async (req,res,next)=>{try{res.locals.user=req.session.userId ? await User.findById(req.session.userId).lean() : null; res.locals.categories=categories; res.locals.googleEnabled=googleEnabled; res.locals.githubEnabled=githubEnabled; res.locals.error=null; next();}catch(e){next(e)}});
 const auth=(req,res,next)=>res.locals.user?next():res.redirect('/login');
 const upload=multer({storage:multer.memoryStorage(),limits:{fileSize:2*1024*1024}}).single('image');
 function eventUpload(req,res,next){upload(req,res,err=>{if(err)return res.status(400).send('Image must be no larger than 2 MB.');if(req.file){const b=req.file.buffer;const jpeg=b.length>3&&b[0]===0xff&&b[1]===0xd8&&b[2]===0xff;const png=b.length>8&&b.subarray(0,8).equals(Buffer.from('89504e470d0a1a0a','hex'));const webp=b.length>12&&b.toString('ascii',0,4)==='RIFF'&&b.toString('ascii',8,12)==='WEBP';if(!jpeg&&!png&&!webp)return res.status(400).send('Please upload a JPG, PNG or WebP image.');req.imageType=jpeg?'image/jpeg':png?'image/png':'image/webp';}next()})}
