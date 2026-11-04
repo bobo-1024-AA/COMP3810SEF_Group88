@@ -60,3 +60,7 @@ Capacity and waitlist operations currently use separate database queries: simult
 ### Google sign-in
 
 Create a Google OAuth web application, configure its consent screen, and add `https://your-app.example.com/auth/google/callback` as an authorized redirect URI (replace the origin with your app URL). Set `APP_BASE_URL`, `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in the hosting platform; do not commit real credentials. Google sign-in creates a student account for a new Google identity. Existing email/password and Microsoft accounts are not automatically linked; use their original sign-in method. Email/password registrations do not verify email addresses. Google sign-in requires Google to report a verified email.
+
+### GitHub sign-in
+
+Create a GitHub OAuth App and set its authorization callback URL to `https://your-app.example.com/auth/github/callback` (replace the origin with your app URL). Set `APP_BASE_URL`, `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` in the environment; never commit credentials. The button appears when all three are configured. GitHub sign-in creates a student account and requires a verified primary GitHub email. Existing accounts are not automatically linked; use their original sign-in method. Live sign-in requires GitHub access and valid OAuth App credentials.
