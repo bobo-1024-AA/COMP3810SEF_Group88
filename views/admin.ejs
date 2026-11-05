@@ -1,5 +1,4 @@
 <div class="heading"><div class="admin-actions"><a class="button secondary" href="/admin/records">Student activity records</a> <a class="button" href="/admin/events/new">+ Create event</a></div></div>
-<h2>Events</h2>
 <% categories.forEach(category=>{ const grouped=events.filter(e=>e.category===category); %>
 <section class="admin-category"><h3><%= category %></h3><div class="card">
 <% if(!grouped.length){ %><p>No events in this category.</p><% } %>
