@@ -19,3 +19,5 @@
 .dashboard-action:hover{background:#1b8ede;color:#fff}.dashboard-remove:hover{background:#d32f2f;color:#fff}
 
 .records-dashboard:hover{background:#7ebc47;color:#fff}
+
+.admin-records-button{background:#7ebc47;color:#fff}.admin-records-button:hover{background:#0a72b4;color:#fff}.admin-create-button{background:#0a72b4;color:#fff}.admin-create-button:hover{background:#7ebc47;color:#fff}

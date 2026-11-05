@@ -1,4 +1,4 @@
-<div class="heading"><div class="admin-actions"><a class="button secondary dashboard-action" href="/admin/records">Student activity records</a> <a class="button" href="/admin/events/new">+ Create event</a></div></div>
+<div class="heading"><div class="admin-actions"><a class="button admin-records-button" href="/admin/records">Student activity records</a> <a class="button admin-create-button" href="/admin/events/new">+ Create event</a></div></div>
 <form class="filters" method="get" action="/admin"><input type="search" name="search" aria-label="Search events by name" placeholder="Search events by name" value="<%= search %>"><button type="submit">Search</button><a class="button secondary dashboard-action" href="/admin">Clear</a></form>
 <% categories.forEach(category=>{ const grouped=events.filter(e=>e.category===category); %>
 <section class="admin-category"><h3><%= category %></h3><div class="card">
