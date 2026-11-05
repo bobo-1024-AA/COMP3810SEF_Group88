@@ -115,24 +115,136 @@ The five categories are Future Skills & Intelligence, Aesthetics & Spirituality,
 - **Student activity records:** search across students and activities, filter by status and update records, including cancelled records and removed events. Completed status requires that the event has started; capacity rules apply to pending and confirmed records. Releasing a place can promote a waitlisted student.
 - **Statistics:** view student counts by level, the top five students by completed hours in each category, and the top 20 Mastering students by total completed hours. Removed activities with completed records are included; ties are ordered by name and email.
 
-## RESTful event CRUD
+## RESTful CRUD Services
 
-For the assignment, the event API deliberately has no authentication. **Anyone who can access the server can create, edit or remove events through this API**; this is suitable only for a controlled course demonstration, not deployment as a real student service. Replace this design with proper API authorization before handling real data.
+The application provides an event API for the course assignment. These endpoints do **not** require login: anyone who can reach the server can create, change or remove events. Use them only in a controlled demonstration environment; authorization must be added before handling real student data.
 
-- `GET /api/events` lists active events. Optional `search` and `category` query parameters filter by name and category.
-- `POST /api/events` creates an event.
-- `PUT /api/events/:id` replaces the editable event fields.
-- `DELETE /api/events/:id` removes an event from listings.
+| Operation | Method | Path | Success |
+| --- | --- | --- | --- |
+| Create | `POST` | `/api/events` | `201 Created`, event JSON |
+| Read | `GET` | `/api/events` | `200 OK`, array of active events |
+| Update | `PUT` | `/api/events/:id` | `200 OK`, updated event JSON |
+| Delete | `DELETE` | `/api/events/:id` | `204 No Content` |
 
-Example (replace the ID with the `_id` returned by POST):
+The examples use a local server and disposable data. For a controlled cloud demonstration, replace `http://localhost:3000` with `https://comp3810sef-group88.onrender.com`. **POST, PUT and DELETE change the selected database**; do not use them against shared data without coordinating with its owners. `curl -i` shows the HTTP status and headers.
+
+### Event fields
+
+Both POST and PUT require all of the following JSON fields. PUT replaces these editable fields; it is not a partial update.
+
+| Field | Description |
+| --- | --- |
+| `name`, `description`, `location` | Non-empty text |
+| `category` | One of the five exact category names listed in the progress section |
+| `date` | Valid event date and time, e.g. ISO 8601 with a time-zone offset |
+| `deadline` | Valid registration deadline, no later than `date` |
+| `capacity` | Positive integer |
+| `hours` | Number of engagement hours, at least 0.1 |
+
+### Demo setup
+
+Run these commands in the same Bash terminal, with the local application running and connected to a **test database**. Each block can be copied and pasted in order. `EVENT_ID` is populated automatically from the create response and used for update and delete.
 
 ```sh
-curl 'http://localhost:3000/api/events?search=workshop'
-curl -X POST http://localhost:3000/api/events -H 'Content-Type: application/json' -d '{"name":"Skills Workshop","description":"Practice new skills","date":"2030-04-01T10:00:00+08:00","deadline":"2030-03-31T10:00:00+08:00","location":"HKMU","category":"Future Skills & Intelligence","capacity":20,"hours":2}'
-curl -X PUT http://localhost:3000/api/events/REPLACE_ID -H 'Content-Type: application/json' -d '{"name":"Skills Workshop Updated","description":"Practice new skills","date":"2030-04-01T10:00:00+08:00","deadline":"2030-03-31T10:00:00+08:00","location":"HKMU","category":"Future Skills & Intelligence","capacity":25,"hours":2}'
-curl -X DELETE http://localhost:3000/api/events/REPLACE_ID
+BASE_URL='http://localhost:3000'
 ```
 
+### 1. Create an event
+
+**POST `/api/events`** — creates a new event and returns it as JSON with status `201`.
+
+**HTTP Request Type:** POST
+
+**Path URI:** `/api/events`
+
+**Example Testing Command:**
+
+```sh
+EVENT_RESPONSE=$(curl -fsS -X POST "$BASE_URL/api/events" \
+  -H 'Content-Type: application/json' \
+  -d '{"name":"Skills Workshop","description":"Practice new skills","date":"2030-04-01T10:00:00+08:00","deadline":"2030-03-31T10:00:00+08:00","location":"HKMU","category":"Future Skills & Intelligence","capacity":20,"hours":2}') && \
+printf '%s\n' "$EVENT_RESPONSE" && \
+EVENT_ID=$(printf '%s' "$EVENT_RESPONSE" | node -e "let s='';process.stdin.on('data',c=>s+=c);process.stdin.on('end',()=>{const id=JSON.parse(s)._id;if(!id)process.exit(1);process.stdout.write(id)})") && \
+printf 'Event ID: %s\n' "$EVENT_ID"
+```
+
+Example response body (the generated ID varies; other MongoDB fields may be present):
+
+```json
+{"_id":"507f1f77bcf86cd799439011","name":"Skills Workshop","category":"Future Skills & Intelligence","capacity":20,"hours":2,"removed":false}
+```
+
+The command saves the returned `_id` in `EVENT_ID` for the update and delete examples. Invalid fields return `400`, for example `{"error":"Invalid event"}`.
+
+### 2. Read events
+
+**GET `/api/events`** — returns a JSON array of events that have not been removed. The optional `search` parameter matches the event name, and `category` filters by an exact category name. An unrecognized category is ignored. There is no single-event GET endpoint in this API.
+
+**HTTP Request Type:** GET
+
+**Path URI:** `/api/events`
+
+**Example Testing Command:**
+
+```sh
+curl -i --get "$BASE_URL/api/events" --data-urlencode 'search=Skills Workshop'
+```
+
+To read the deployed application without changing its data:
+
+```sh
+curl -i -X GET 'https://comp3810sef-group88.onrender.com/api/events'
+```
+
+Example response body (abbreviated; actual event objects contain additional fields):
+
+```json
+[{"_id":"507f1f77bcf86cd799439011","name":"Skills Workshop","category":"Future Skills & Intelligence","capacity":20,"hours":2,"removed":false}]
+```
+
+No matching events returns `[]` with status `200`.
+
+### 3. Update an event
+
+**PUT `/api/events/:id`** — uses the ID saved during creation and requires all editable fields. The response is the updated event JSON with status `200`.
+
+**HTTP Request Type:** PUT
+
+**Path URI:** `/api/events/:id`
+
+**Example Testing Command:**
+
+```sh
+curl -i -X PUT "$BASE_URL/api/events/$EVENT_ID" \
+  -H 'Content-Type: application/json' \
+  -d '{"name":"Skills Workshop Updated","description":"Practice new skills","date":"2030-04-01T10:00:00+08:00","deadline":"2030-03-31T10:00:00+08:00","location":"HKMU","category":"Future Skills & Intelligence","capacity":25,"hours":2}'
+```
+
+**Sample response** (`200 OK`, abbreviated):
+
+```json
+{"_id":"507f1f77bcf86cd799439011","name":"Skills Workshop Updated","category":"Future Skills & Intelligence","capacity":25,"hours":2,"removed":false}
+```
+
+An invalid event returns `400`. Capacity cannot be set below the number of pending, confirmed and completed registrations; this returns `400` with `{"error":"Capacity is below registrations"}`. A valid but unavailable ID returns `404`.
+
+### 4. Delete an event
+
+**DELETE `/api/events/:id`** — uses the ID saved during creation.
+
+**HTTP Request Type:** DELETE
+
+**Path URI:** `/api/events/:id`
+
+**Example Testing Command:**
+
+```sh
+curl -i -X DELETE "$BASE_URL/api/events/$EVENT_ID"
+```
+
+**Sample response:** `HTTP/1.1 204 No Content`, with no response body. Deletion marks the event as removed, hides it from active listings and preserves registration history. A valid but unavailable ID returns `404`. Use GET to verify the event no longer appears.
+
+Malformed IDs and validation errors can return `400`; unexpected server errors return `500`. The examples are illustrative, not captured production data.
 
 ## Limitations and verification
 
