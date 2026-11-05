@@ -26,3 +26,5 @@
 .event-status.status-confirmed,.student-status.status-confirmed{background:#7ebc47;color:#fff;font-weight:700}.event-status.status-completed,.student-status.status-completed{background:#0a72b4;color:#fff;font-weight:700}.event-status.status-cancelled,.student-status.status-cancelled{background:#d32f2f;color:#fff;font-weight:700}.event-status.status-waitlisted,.student-status.status-waitlisted{background:#ad4673;color:#fff;font-weight:700}.event-status.status-pending,.student-status.status-pending{background:#dad8a7;color:#fff;font-weight:800}
 
 .progress-category-0 progress{accent-color:#1b8ede}.progress-category-1 progress{accent-color:#ffc62e}.progress-category-2 progress{accent-color:#fc9e2f}.progress-category-3 progress{accent-color:#b359fa}.progress-category-4 progress{accent-color:#87cf3f}
+
+.history-cancel:hover{background:#d32f2f;color:#fff}
