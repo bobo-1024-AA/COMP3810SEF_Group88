@@ -1,4 +1,4 @@
-<div class="heading"><div><p class="eyebrow">SAO</p><h1>Student activity records</h1><p>View and update registrations, including cancelled records and removed activities.</p></div><a href="/admin">← SAO dashboard</a></div>
+<div class="heading"><a href="/admin">← SAO dashboard</a></div>
 <% if(updated){ %><p class="success" role="status">Activity record updated.</p><% } %>
 <form class="filters" method="get" action="/admin/records"><label>Search by student name, email or activity<input type="search" name="search" value="<%= search %>"></label><label>Status<select name="status"><option value="">All statuses</option><% ['pending','confirmed','waitlisted','completed','cancelled'].forEach(s=>{ %><option value="<%= s %>" <%= status===s?'selected':'' %>><%= s[0].toUpperCase()+s.slice(1) %></option><% }) %></select></label><button>Search</button><a href="/admin/records">Clear</a></form>
 <p><%= records.length %> record<%= records.length===1?'':'s' %></p>
