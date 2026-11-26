@@ -21,6 +21,8 @@ Repository: https://github.com/bobo-1024-AA/COMP3810SEF_Group88
 
 **Division of work:** To be completed by the group.
 
+The member-to-role assignments must be supplied by the group before submission.
+
 ## Project files and technologies
 
 - [`server.js`](server.js): Express configuration, MongoDB schemas, authentication, student and SAO routes, and the REST API. The `User`, `Event` and `Registration` schemas are defined here.
@@ -115,139 +117,165 @@ The five categories are Future Skills & Intelligence, Aesthetics & Spirituality,
 - **Student activity records:** search across students and activities, filter by status and update records, including cancelled records and removed events. Completed status requires that the event has started; capacity rules apply to pending and confirmed records. Releasing a place can promote a waitlisted student.
 - **Statistics:** view student counts by level, the top five students by completed hours in each category, and the top 20 Mastering students by total completed hours. Removed activities with completed records are included; ties are ordered by name and email.
 
+### SAO web CRUD walkthrough
+
+1. Start the server, open `/login` and sign in using an SAO account. For a local demonstration, the account is initially provisioned from `SAO_EMAIL` and `SAO_PASSWORD` when the configured email does not already exist. A student account cannot access the SAO management pages.
+2. Open **SAO dashboard** and select **+ Create event**. Enter the activity details, optionally select an image and press **Save event**.
+3. Use the dashboard's **Search** field to find an activity by name; **Clear** restores the full list. The student **Events** page also supports search, category and availability filters.
+4. Select **Edit** beside an activity, change its details and press **Save event**. An existing image remains unless it is replaced or removed.
+5. Select **Delete** beside an activity and confirm the prompt. The activity disappears from active lists while its registration history is retained. Select **Log out** in the navigation when finished.
+
+For a command-line demonstration of the authenticated web form, log in as SAO in a second terminal while the server is running. Enter the account details when prompted; use a test account and do not commit credentials. The cookie file contains an active session, so keep it private.
+
+```bash
+read -r -p "SAO email: " sao_email
+read -r -s -p "SAO password: " sao_password
+printf '\n'
+umask 077
+curl -i -c /tmp/metrofaith-cookies.txt \
+  -X POST "http://localhost:3000/login" \
+  --data-urlencode "email=$sao_email" \
+  --data-urlencode "password=$sao_password"
+unset sao_email sao_password
+```
+
+A successful SAO login normally redirects to `/events`. After confirming that login succeeded, replace the image path below with an existing JPG, PNG or WebP file on your computer, then submit the web form:
+
+```bash
+IMAGE_PATH="/absolute/path/to/test.jpg"
+curl -i -b /tmp/metrofaith-cookies.txt \
+  -X POST "http://localhost:3000/admin/events" \
+  -F "name=Traditional Chinese Medicine Wellness Talk: Recovery Guide for Late-Nighters" \
+  -F "description=Understand the effects of staying up late from a Traditional Chinese Medicine perspective and learn basic wellness concepts" \
+  -F "date=2027-06-20T06:00:00.000Z" \
+  -F "location=Room H002, Ho Man Tin Plaza Learning Centre" \
+  -F "category=Igniting & Sports" \
+  -F "capacity=30" \
+  -F "deadline=2027-06-19T06:00:00.000Z" \
+  -F "hours=2" \
+  -F "image=@$IMAGE_PATH"
+```
+
+On success the form redirects to `/admin`. Use the dashboard to search for, edit or delete this test activity. After completing the demonstration, end the curl session and remove the saved cookie file:
+
+```bash
+curl -b /tmp/metrofaith-cookies.txt -X POST "http://localhost:3000/logout"
+rm /tmp/metrofaith-cookies.txt
+```
+
+Form routes use POST for edits and removals; the separate REST examples below demonstrate the required PUT and DELETE methods.
+
 ## RESTful CRUD Services
 
-The application provides an event API for the course assignment. These endpoints do **not** require login: anyone who can reach the server can create, change or remove events. Use them only in a controlled demonstration environment; authorization must be added before handling real student data.
+The assignment requires an unauthenticated API using GET, POST, PUT and DELETE. The endpoints below operate on activity documents. They are separate from the SAO web forms, which require login and use form POST requests. REST POST and PUT accept JSON; they do not accept image uploads.
 
-| Operation | Method | Path | Success |
+| Operation | HTTP method | URI | Successful response |
 | --- | --- | --- | --- |
-| Create | `POST` | `/api/events` | `201 Created`, event JSON |
-| Read | `GET` | `/api/events` | `200 OK`, array of active events |
-| Read one | `GET` | `/api/events/:id` | `200 OK`, event JSON; `404 Not Found` if absent or removed |
-| Update | `PUT` | `/api/events/:id` | `200 OK`, updated event JSON |
-| Delete | `DELETE` | `/api/events/:id` | `204 No Content` |
+| Create | POST | `/api/events` | `201 Created` and activity JSON |
+| Read all | GET | `/api/events` | `200 OK` and an array of active activities |
+| Read one | GET | `/api/events/:id` | `200 OK` and activity JSON |
+| Search | GET | `/api/events?search=...` | `200 OK` and matching active activities |
+| Update | PUT | `/api/events/:id` | `200 OK` and updated activity JSON |
+| Delete | DELETE | `/api/events/:id` | `204 No Content` |
 
-The examples use a local server and disposable data. For a controlled cloud demonstration, replace `http://localhost:3000` with `https://comp3810sef-group88.onrender.com`. **POST, PUT and DELETE change the selected database**; do not use them against shared data without coordinating with its owners. `curl -i` shows the HTTP status and headers.
+These routes do **not** require authentication. Anyone with access to the server can create, update or remove activities; use a test database for the following demonstration. When localhost and the deployed website share a MongoDB database, changes made locally also affect the website. DELETE marks an activity as removed while retaining its registration history.
 
-To retrieve one active event after setting `EVENT_ID`, run `curl "$BASE_URL/api/events/$EVENT_ID"`. An invalid MongoDB ID returns `400 Bad Request`.
+Both POST and PUT require the full editable activity: `name`, `description`, `date`, `location`, `category`, `capacity`, `deadline` and `hours`. Use an exact category name from the progress section, a positive integer capacity, and at least 0.1 hours. The deadline must not be later than the activity date. PUT is a full update of these fields, not a partial update. Dates below are in UTC; `06:00Z` is 14:00 in Hong Kong.
 
-### Event fields
+### REST API demonstration
 
-Both POST and PUT require all of the following JSON fields. PUT replaces these editable fields; it is not a partial update.
+In terminal 1, start the application as described in **How to start**:
 
-| Field | Description |
-| --- | --- |
-| `name`, `description`, `location` | Non-empty text |
-| `category` | One of the five exact category names listed in the progress section |
-| `date` | Valid event date and time, e.g. ISO 8601 with a time-zone offset |
-| `deadline` | Valid registration deadline, no later than `date` |
-| `capacity` | Positive integer |
-| `hours` | Number of engagement hours, at least 0.1 |
-
-### Demo setup
-
-Run these commands in the same Bash terminal, with the local application running and connected to a **test database**. Each block can be copied and pasted in order. `EVENT_ID` is populated automatically from the create response and used for update and delete.
-
-```sh
-BASE_URL='http://localhost:3000'
+```bash
+cd COMP3810SEF_Group88
+npm start
 ```
 
-### 1. Create an event
+In terminal 2, run the following commands in order. The activity is disposable test data; the final command removes it. The JSON API does not add an image.
 
-**POST `/api/events`** — creates a new event and returns it as JSON with status `201`.
+**1. Create — HTTP POST `/api/events`**
 
-**HTTP Request Type:** POST
-
-**Path URI:** `/api/events`
-
-**Example Testing Command:**
-
-```sh
-EVENT_RESPONSE=$(curl -fsS -X POST "$BASE_URL/api/events" \
-  -H 'Content-Type: application/json' \
-  -d '{"name":"Skills Workshop","description":"Practice new skills","date":"2030-04-01T10:00:00+08:00","deadline":"2030-03-31T10:00:00+08:00","location":"HKMU","category":"Future Skills & Intelligence","capacity":20,"hours":2}') && \
-printf '%s\n' "$EVENT_RESPONSE" && \
-EVENT_ID=$(printf '%s' "$EVENT_RESPONSE" | node -e "let s='';process.stdin.on('data',c=>s+=c);process.stdin.on('end',()=>{const id=JSON.parse(s)._id;if(!id)process.exit(1);process.stdout.write(id)})") && \
-printf 'Event ID: %s\n' "$EVENT_ID"
+```bash
+curl -X POST "http://localhost:3000/api/events" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Traditional Chinese Medicine Wellness Talk: Recovery Guide for Late-Nighters",
+    "description": "Understand the effects of staying up late from a Traditional Chinese Medicine perspective and learn basic wellness concepts",
+    "date": "2027-06-20T06:00:00.000Z",
+    "location": "Room H002, Ho Man Tin Plaza Learning Centre",
+    "category": "Igniting & Sports",
+    "capacity": 30,
+    "deadline": "2027-06-19T06:00:00.000Z",
+    "hours": 2
+  }'
 ```
 
-Example response body (the generated ID varies; other MongoDB fields may be present):
+Copy the returned `_id` into the variable below. Use the ID returned by this POST; example IDs in other documents refer to different databases. Do not include spaces inside the quotes.
 
-```json
-{"_id":"507f1f77bcf86cd799439011","name":"Skills Workshop","category":"Future Skills & Intelligence","capacity":20,"hours":2,"removed":false}
+```bash
+EVENT_ID="paste-the-returned-id-here"
 ```
 
-The command saves the returned `_id` in `EVENT_ID` for the update and delete examples. Invalid fields return `400`, for example `{"error":"Invalid event"}`.
+**2. Read all — HTTP GET `/api/events`**
 
-### 2. Read events
-
-**GET `/api/events`** — returns a JSON array of events that have not been removed. The optional `search` parameter matches the event name, and `category` filters by an exact category name. An unrecognized category is ignored. There is no single-event GET endpoint in this API.
-
-**HTTP Request Type:** GET
-
-**Path URI:** `/api/events`
-
-**Example Testing Command:**
-
-```sh
-curl -i --get "$BASE_URL/api/events" --data-urlencode 'search=Skills Workshop'
+```bash
+curl -X GET "http://localhost:3000/api/events"
 ```
 
-To read the deployed application without changing its data:
+**3. Read one — HTTP GET `/api/events/:id`**
 
-```sh
-curl -i -X GET 'https://comp3810sef-group88.onrender.com/api/events'
+```bash
+curl -X GET "http://localhost:3000/api/events/$EVENT_ID"
 ```
 
-Example response body (abbreviated; actual event objects contain additional fields):
+A valid ID for an unavailable or removed activity returns `404`; a malformed ID returns `400`.
 
-```json
-[{"_id":"507f1f77bcf86cd799439011","name":"Skills Workshop","category":"Future Skills & Intelligence","capacity":20,"hours":2,"removed":false}]
+**4. Search — HTTP GET `/api/events?search=...`**
+
+```bash
+curl -G "http://localhost:3000/api/events" \
+  --data-urlencode "search=Traditional Chinese Medicine Wellness Talk"
 ```
 
-No matching events returns `[]` with status `200`.
+The `search` parameter matches activity names; `category` can also filter by an exact category. An unrecognized category is ignored. Check `_id` when multiple activities have the same name.
 
-### 3. Update an event
+**5. Update — HTTP PUT `/api/events/:id`**
 
-**PUT `/api/events/:id`** — uses the ID saved during creation and requires all editable fields. The response is the updated event JSON with status `200`.
+Change the category from `Igniting & Sports` to `Future Skills & Intelligence` while supplying all editable fields:
 
-**HTTP Request Type:** PUT
-
-**Path URI:** `/api/events/:id`
-
-**Example Testing Command:**
-
-```sh
-curl -i -X PUT "$BASE_URL/api/events/$EVENT_ID" \
-  -H 'Content-Type: application/json' \
-  -d '{"name":"Skills Workshop Updated","description":"Practice new skills","date":"2030-04-01T10:00:00+08:00","deadline":"2030-03-31T10:00:00+08:00","location":"HKMU","category":"Future Skills & Intelligence","capacity":25,"hours":2}'
+```bash
+curl -X PUT "http://localhost:3000/api/events/$EVENT_ID" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Traditional Chinese Medicine Wellness Talk: Recovery Guide for Late-Nighters",
+    "description": "Understand the effects of staying up late from a Traditional Chinese Medicine perspective and learn basic wellness concepts",
+    "date": "2027-06-20T06:00:00.000Z",
+    "location": "Room H002, Ho Man Tin Plaza Learning Centre",
+    "category": "Future Skills & Intelligence",
+    "capacity": 30,
+    "deadline": "2027-06-19T06:00:00.000Z",
+    "hours": 2
+  }'
 ```
 
-**Sample response** (`200 OK`, abbreviated):
+The response contains the updated activity. Invalid fields or a capacity below occupied registrations return `400`; a valid but unavailable ID returns `404`.
 
-```json
-{"_id":"507f1f77bcf86cd799439011","name":"Skills Workshop Updated","category":"Future Skills & Intelligence","capacity":25,"hours":2,"removed":false}
+**6. Read again — HTTP GET `/api/events/:id`**
+
+```bash
+curl -X GET "http://localhost:3000/api/events/$EVENT_ID"
 ```
 
-An invalid event returns `400`. Capacity cannot be set below the number of pending, confirmed and completed registrations; this returns `400` with `{"error":"Capacity is below registrations"}`. A valid but unavailable ID returns `404`.
+Confirm that `category` is `Future Skills & Intelligence`.
 
-### 4. Delete an event
+**7. Delete — HTTP DELETE `/api/events/:id`**
 
-**DELETE `/api/events/:id`** — uses the ID saved during creation.
-
-**HTTP Request Type:** DELETE
-
-**Path URI:** `/api/events/:id`
-
-**Example Testing Command:**
-
-```sh
-curl -i -X DELETE "$BASE_URL/api/events/$EVENT_ID"
+```bash
+curl -X DELETE "http://localhost:3000/api/events/$EVENT_ID"
 ```
 
-**Sample response:** `HTTP/1.1 204 No Content`, with no response body. Deletion marks the event as removed, hides it from active listings and preserves registration history. A valid but unavailable ID returns `404`. Use GET to verify the event no longer appears.
+A successful delete returns `204 No Content`, so `curl` prints no response body. A later GET for this ID returns `404`. For debugging, add `-i` to a curl command to display the HTTP status and headers.
 
-Malformed IDs and validation errors can return `400`; unexpected server errors return `500`. The examples are illustrative, not captured production data.
 
 ## Limitations and verification
 
