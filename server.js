@@ -28,7 +28,6 @@ const userSchema = new mongoose.Schema({
     trim: true,
   },
   password: { type: String },
-  microsoftId: { type: String, unique: true, sparse: true },
   googleId: { type: String, unique: true, sparse: true },
   githubId: { type: String, unique: true, sparse: true },
   role: { type: String, enum: ['student', 'sao'], default: 'student' },
