@@ -1,30 +1,1248 @@
-:root{font-family:Inter,system-ui,sans-serif;color:#1e293b;background:#f7f8fa;line-height:1.5}*{box-sizing:border-box}body{margin:0}header{background:#fff;border-bottom:1px solid #e5e7eb}.nav{max-width:1120px;margin:auto;display:flex;align-items:center;justify-content:space-between;padding:18px 24px}.brand{font-weight:800;letter-spacing:.08em;color:#19376d;text-decoration:none}.brand span{color:#b43d50}nav,.row,.filters,.heading{display:flex;align-items:center;gap:18px}nav form,.row form{margin:0}a{color:#244c87}nav a{text-decoration:none;color:#34445a}main{max-width:1120px;margin:auto;padding:50px 24px 80px;min-height:80vh}h1{font-size:2.25rem;line-height:1.15;margin:8px 0 12px;color:#172c4a}h2{font-size:1.25rem}h3{font-size:1rem;margin:0}p{color:#5c687a}.eyebrow{font-size:.75rem;letter-spacing:.12em;color:#a3364e;font-weight:700}.heading{justify-content:space-between;margin-bottom:24px}.card{background:#fff;border:1px solid #e3e7ee;border-radius:10px;padding:22px;box-shadow:0 3px 12px #25355108}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:18px}.progress-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin:28px 0 40px}.progress-grid p{margin:12px 0 4px}progress{width:100%;accent-color:#315b91}.tag,.status{display:inline-block;background:#edf2f8;color:#34527a;border-radius:4px;padding:4px 8px;font-size:.75rem;font-weight:600}.status{text-transform:capitalize}.details{font-size:.9rem;line-height:1.9}.details strong{color:#34445a}.filters{margin:25px 0;flex-wrap:wrap}.filters input{flex:1;min-width:180px}.filters select{width:auto}.row{padding:14px 0;border-bottom:1px solid #edf0f4}.row:last-child{border:0}.row>div{flex:1}.row p{margin:4px 0;font-size:.9rem}.stack{display:grid;gap:16px}.stack h2,.stack p{margin:0}label{display:grid;gap:6px;font-size:.9rem;font-weight:600}input,select,textarea{font:inherit;border:1px solid #cbd3df;border-radius:6px;padding:10px;background:#fff;width:100%}textarea{min-height:100px}button,.button{font:inherit;cursor:pointer;border:0;border-radius:6px;background:#244c87;color:#fff;padding:10px 16px;text-decoration:none;font-weight:600;display:inline-block}button:hover,.button:hover{background:#19376d}.secondary{color:#334866;background:#eef2f7}.link{background:none;color:#34445a;padding:0;font-weight:400}.link:hover{background:none}.auth,.narrow{max-width:480px;margin:15px auto}.auth>.card{margin-top:30px}.notice{padding:12px;background:#fff0f1;color:#9f263d}.event h2{margin-bottom:5px}footer{text-align:center;padding:25px;color:#7a8698;font-size:.8rem}@media(max-width:600px){.nav{align-items:flex-start;gap:16px;flex-direction:column}nav{flex-wrap:wrap}.heading{align-items:flex-start;flex-direction:column}.row{flex-wrap:wrap}h1{font-size:1.8rem}}
-.event{padding:0;overflow:hidden}.event-image{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:#e9eff6}.event-placeholder{display:flex;align-items:center;justify-content:center;color:#6c809c;font-size:.9rem;letter-spacing:.12em;font-weight:700}.event-content{padding:22px}.form-image{width:100%;max-height:240px;object-fit:cover;border-radius:6px}.checkbox{display:flex;align-items:center;gap:8px}.checkbox input{width:auto}@media(max-width:600px){main{padding:30px 16px 60px}.grid{grid-template-columns:minmax(0,1fr);gap:16px}.filters{display:grid;grid-template-columns:1fr;width:100%}.filters input,.filters select,.filters button{width:100%;min-width:0}.event-content{padding:20px}.event-content form button{width:100%;min-height:48px}}
-.admin-actions{display:flex;gap:10px;flex-wrap:wrap}.filters label{flex:1;min-width:180px}.filters button,.filters>a{align-self:end}.record-edit{display:flex;align-items:end;gap:8px}.record-edit label{min-width:150px;font-size:.75rem}.success{padding:12px;background:#eaf7ee;color:#206738;border-radius:6px}@media(max-width:600px){.record-edit{width:100%}.record-edit label{flex:1}.filters button,.filters>a{align-self:auto}}
+/* === 1. Variables & Base Reset === */
 
-.brand{display:inline-block;max-width:100%}.brand-logo{display:block;width:360px;max-width:100%;height:auto}.brand-logo[hidden],.brand-fallback[hidden]{display:none}@media(max-width:600px){.brand-logo{width:min(360px,calc(100vw - 48px))}}
+/* Define shared design tokens and base document styles */
+:root {
+  /* Shared colors */
+  --text-body: #1e293b;
+  --background-page: #f7f8fa;
+  --surface: #fff;
+  --border-header: #e5e7eb;
+  --brand-dark: #19376d;
+  --brand-accent: #b43d50;
+  --brand-primary: #244c87;
+  --text-navigation: #34445a;
+  --text-heading: #172c4a;
+  --text-muted: #5c687a;
+  --text-eyebrow: #a3364e;
+  --border-card: #e3e7ee;
+  --shadow-card: #25355108;
+  --progress-default: #315b91;
+  --badge-background: #edf2f8;
+  --badge-text: #34527a;
+  --border-row: #edf0f4;
+  --border-input: #cbd3df;
+  --text-secondary: #334866;
+  --background-secondary: #eef2f7;
+  --alert-background: #fff0f1;
+  --alert-text: #9f263d;
+  --text-footer: #7a8698;
+  --background-placeholder: #e9eff6;
+  --text-placeholder: #6c809c;
+  --success-background: #eaf7ee;
+  --success-text: #206738;
+  --border-provider: #b8c5d3;
+  --text-provider: #24384e;
+  --background-provider-hover: #f4f7fa;
+  --border-provider-hover: #8192a7;
+  --focus-outline: #87aee0;
+  --text-student: #242a32;
+  --link-student: #0670ed;
+  --heading-student: #7db72c;
+  --background-category: #dff8c7;
+  --border-table: #d9dfe4;
+  --text-category: #315c23;
+  --background-table-stripe: #f0f0f0;
+  --category-blue: #1b8ede;
+  --category-yellow: #ffc62e;
+  --category-orange: #fc9e2f;
+  --category-purple: #b359fa;
+  --category-green: #87cf3f;
+  --status-danger: #d32f2f;
+  --status-confirmed: #7ebc47;
+  --status-completed: #0a72b4;
+  --status-waitlisted: #ad4673;
+  --status-pending: #dad8a7;
 
-.google-button,.github-button{display:flex;align-items:center;justify-content:center;gap:12px;min-height:48px;border:1px solid #b8c5d3;background:#fff;color:#24384e}.google-button:hover,.github-button:hover{background:#f4f7fa;border-color:#8192a7}.google-button:focus-visible,.github-button:focus-visible{outline:3px solid #87aee0;outline-offset:2px}.google-icon,.github-icon{width:20px;height:20px;flex:none}
-.event{display:flex;flex-direction:column}.event-content{display:flex;flex:1;flex-direction:column;align-items:flex-start}.event-action{display:flex;justify-content:flex-end;align-items:center;align-self:stretch;margin-top:auto;padding-top:18px}.event-action form{margin:0;width:100%}.event-register,.event-status{font-size:1rem;font-weight:700;padding:12px 20px;min-height:48px;border-radius:7px}.event-register{width:100%}.event-status{display:inline-flex;width:100%;align-items:center;justify-content:center;text-align:center}
-.student-add-form{display:grid;gap:14px;margin:20px 0}.student-picker-tools,.student-add-controls{display:flex;align-items:end;gap:10px;flex-wrap:wrap}.student-picker-tools span{font-size:.9rem;color:#5c687a}.student-picker{border:1px solid #cbd3df;border-radius:6px;max-height:280px;overflow-y:auto;padding:8px 12px}.student-picker legend{font-size:.9rem;font-weight:600}.student-option{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid #edf0f4;font-weight:400}.student-option:last-of-type{border-bottom:0}.student-option input{width:auto;flex:none}.student-option[hidden]{display:none}.student-add-controls label{min-width:180px}.record-row>.record-actions{flex:0 1 auto;display:flex;align-items:flex-end;gap:8px}.record-actions form{margin:0}.record-actions .record-edit{width:auto}.record-actions button{white-space:nowrap}@media(max-width:600px){.record-row>.record-actions{flex:1 1 100%;width:100%}.record-actions .record-edit{flex:1;min-width:0}.record-actions .record-edit label{min-width:0}.record-actions .record-edit select{min-width:0}}
+  /* Shared sizing and spacing */
+  --container-wide: 1120px;
+  --container-narrow: 480px;
+  --size-4: 4px;
+  --radius-control: 6px;
+  --size-8: 8px;
+  --size-10: 10px;
+  --size-12: 12px;
+  --size-14: 14px;
+  --size-16: 16px;
+  --size-18: 18px;
+  --size-20: 20px;
+  --card-padding: 22px;
+  --size-24: 24px;
+  --control-height: 48px;
 
-.student-home{background:#fff;color:#242a32;padding:0 24px 36px}.student-home section{margin:36px 0 50px}.student-home p{color:#242a32;line-height:1.6}.student-home a{color:#0670ed;font-weight:700}.home-banner,.home-categories{display:block;width:100%;height:auto}.home-banner[hidden],.home-categories[hidden],.category-fallback[hidden]{display:none}.home-heading{font-size:1.15rem;font-weight:700;color:#7db72c;margin:0 0 20px}.home-heading::before{content:'';display:inline-block;width:12px;height:12px;margin-right:10px;border-radius:50%;background:#dff8c7}.home-table-wrap{overflow-x:auto}.student-home table{width:100%;border-collapse:collapse;text-align:left}.student-home th,.student-home td{border:1px solid #d9dfe4;padding:10px}.student-home th{border-bottom:2px solid #242a32}.student-home ul{padding-left:24px}.category-fallback{display:flex;gap:12px;flex-wrap:wrap;list-style:none;padding:0!important}.category-fallback li{flex:1 1 150px;padding:18px;border-radius:8px;background:#dff8c7;color:#315c23;font-weight:700}@media(max-width:600px){.student-home{padding:0 0 24px}.student-home section{margin:28px 0 36px}.student-home table{min-width:480px}}
-.home-heading{display:flex;align-items:center;gap:8px}.home-heading::before{display:none}.home-heading img{width:42px;height:42px;object-fit:contain;flex:none}
-.home-categories{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:20px;align-items:start}.home-categories img{display:block;width:100%;height:auto}@media(max-width:600px){.home-categories{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}}
+  /* Shared typography */
+  --font-family: Inter, system-ui, sans-serif;
 
-.category-records{margin:40px 0}.category-record{margin:36px 0 48px}.category-record h3{font-size:1.15rem;margin:0 0 14px}.category-table-wrap{overflow-x:auto}.category-record table{width:100%;border-collapse:collapse;text-align:left}.category-record th,.category-record td{padding:12px 14px;border-bottom:1px solid #d9dfe4}.category-record th{border-bottom:2px solid #242a32}.category-record tbody tr:nth-child(odd){background:#f0f0f0}.category-record td:last-child,.category-record th:last-child{white-space:nowrap}@media(max-width:600px){.category-record table{min-width:480px}}
+  font-family: var(--font-family);
+  color: var(--text-body);
+  background: var(--background-page);
+  line-height: 1.5;
+}
 
-.admin-category{margin:24px 0}.admin-category h3{margin-bottom:12px;font-size:1.25rem}.event-content .tag{font-weight:700}.tag.category-0{background:#1b8ede;color:#fff}.tag.category-1{background:#ffc62e;color:#fff}.tag.category-2{background:#fc9e2f;color:#fff}.tag.category-3{background:#b359fa;color:#fff}.tag.category-4{background:#87cf3f;color:#fff}
+/* Apply border-box sizing to all elements */
+* {
+  box-sizing: border-box;
+}
 
-.dashboard-action:hover{background:#1b8ede;color:#fff}.dashboard-remove:hover{background:#d32f2f;color:#fff}
+/* Remove the default body margin */
+body {
+  margin: 0;
+}
 
-.records-dashboard:hover{background:#7ebc47;color:#fff}
+/* Set the default link color */
+a {
+  color: var(--brand-primary);
+}
 
-.admin-records-button{background:#7ebc47;color:#fff}.admin-records-button:hover{background:#0a72b4;color:#fff}.admin-create-button{background:#0a72b4;color:#fff}.admin-create-button:hover{background:#7ebc47;color:#fff}
+/* === 2. Typography === */
 
-.event-register.category-0{background:#1b8ede;color:#fff}.event-register.category-1{background:#ffc62e;color:#fff;font-weight:800}.event-register.category-2{background:#fc9e2f;color:#fff}.event-register.category-3{background:#b359fa;color:#fff}.event-register.category-4{background:#87cf3f;color:#fff}.event-register:hover{filter:brightness(.85)}
-.event-status.status-confirmed,.student-status.status-confirmed{background:#7ebc47;color:#fff;font-weight:700}.event-status.status-completed,.student-status.status-completed{background:#0a72b4;color:#fff;font-weight:700}.event-status.status-cancelled,.student-status.status-cancelled{background:#d32f2f;color:#fff;font-weight:700}.event-status.status-waitlisted,.student-status.status-waitlisted{background:#ad4673;color:#fff;font-weight:700}.event-status.status-pending,.student-status.status-pending{background:#dad8a7;color:#fff;font-weight:800}
+/* Style primary page headings */
+h1 {
+  font-size: 2.25rem;
+  line-height: 1.15;
+  margin: var(--size-8) 0 var(--size-12);
+  color: var(--text-heading);
+}
 
-.progress-category-0 progress{accent-color:#1b8ede}.progress-category-1 progress{accent-color:#ffc62e}.progress-category-2 progress{accent-color:#fc9e2f}.progress-category-3 progress{accent-color:#b359fa}.progress-category-4 progress{accent-color:#87cf3f}
+/* Size secondary headings */
+h2 {
+  font-size: 1.25rem;
+}
 
-.history-cancel:hover{background:#d32f2f;color:#fff}
+/* Size tertiary headings */
+h3 {
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* Set the default paragraph color */
+p {
+  color: var(--text-muted);
+}
+
+/* Style eyebrow */
+.eyebrow {
+  font-size: .75rem;
+  letter-spacing: .12em;
+  color: var(--text-eyebrow);
+  font-weight: 700;
+}
+
+/* Style details */
+.details {
+  font-size: .9rem;
+  line-height: 1.9;
+}
+
+/* Style details strong */
+.details strong {
+  color: var(--text-navigation);
+}
+
+/* === 3. Layout & Navigation === */
+
+/* Style the site header */
+header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-header);
+}
+
+/* Style nav */
+.nav {
+  max-width: var(--container-wide);
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--size-18) var(--size-24);
+}
+
+/* Style brand */
+.brand {
+  font-weight: 800;
+  letter-spacing: .08em;
+  color: var(--brand-dark);
+  text-decoration: none;
+}
+
+/* Style brand span */
+.brand span {
+  color: var(--brand-accent);
+}
+
+/* Style nav and row and filters and heading */
+nav,
+.row,
+.filters,
+.heading {
+  display: flex;
+  align-items: center;
+  gap: var(--size-18);
+}
+
+/* Style nav form and row form */
+nav form,
+.row form {
+  margin: 0;
+}
+
+/* Style nav a */
+nav a {
+  text-decoration: none;
+  color: var(--text-navigation);
+}
+
+/* Constrain and space the main content */
+main {
+  max-width: var(--container-wide);
+  margin: auto;
+  padding: 50px var(--size-24) 80px;
+  min-height: 80vh;
+}
+
+/* Style heading */
+.heading {
+  justify-content: space-between;
+  margin-bottom: var(--size-24);
+}
+
+/* Style grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(290px,1fr));
+  gap: var(--size-18);
+}
+
+/* Style row */
+.row {
+  padding: var(--size-14) 0;
+  border-bottom: 1px solid var(--border-row);
+}
+
+/* Style row last child */
+.row:last-child {
+  border: 0;
+}
+
+/* Style row div */
+.row>div {
+  flex: 1;
+}
+
+/* Style row p */
+.row p {
+  margin: var(--size-4) 0;
+  font-size: .9rem;
+}
+
+/* Style stack */
+.stack {
+  display: grid;
+  gap: var(--size-16);
+}
+
+/* Style stack h2 and stack p */
+.stack h2,
+.stack p {
+  margin: 0;
+}
+
+/* Style auth and narrow */
+.auth,
+.narrow {
+  max-width: var(--container-narrow);
+  margin: 15px auto;
+}
+
+/* Style auth card */
+.auth>.card {
+  margin-top: 30px;
+}
+
+/* Style the centered site footer */
+footer {
+  text-align: center;
+  padding: 25px;
+  color: var(--text-footer);
+  font-size: .8rem;
+}
+
+/* Style brand */
+.brand {
+  display: inline-block;
+  max-width: 100%;
+}
+
+/* Style brand logo */
+.brand-logo {
+  display: block;
+  width: 360px;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Style brand logo hidden and brand fallback hidden */
+.brand-logo[hidden],
+.brand-fallback[hidden] {
+  display: none;
+}
+
+/* === 4. Components & Badges === */
+
+/* Style card */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border-card);
+  border-radius: var(--size-10);
+  padding: var(--card-padding);
+  box-shadow: 0 3px var(--size-12) var(--shadow-card);
+}
+
+/* Style progress grid */
+.progress-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
+  gap: var(--size-14);
+  margin: 28px 0 40px;
+}
+
+/* Style progress grid p */
+.progress-grid p {
+  margin: var(--size-12) 0 var(--size-4);
+}
+
+/* Style progress indicators */
+progress {
+  width: 100%;
+  accent-color: var(--progress-default);
+}
+
+/* Style tag and status */
+.tag,
+.status {
+  display: inline-block;
+  background: var(--badge-background);
+  color: var(--badge-text);
+  border-radius: var(--size-4);
+  padding: var(--size-4) var(--size-8);
+  font-size: .75rem;
+  font-weight: 600;
+}
+
+/* Style status */
+.status {
+  text-transform: capitalize;
+}
+
+/* Style notice */
+.notice {
+  padding: var(--size-12);
+  background: var(--alert-background);
+  color: var(--alert-text);
+}
+
+/* Style event h2 */
+.event h2 {
+  margin-bottom: 5px;
+}
+
+/* Style event */
+.event {
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Style event image */
+.event-image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  background: var(--background-placeholder);
+}
+
+/* Style event placeholder */
+.event-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-placeholder);
+  font-size: .9rem;
+  letter-spacing: .12em;
+  font-weight: 700;
+}
+
+/* Style event content */
+.event-content {
+  padding: var(--card-padding);
+}
+
+/* Style success */
+.success {
+  padding: var(--size-12);
+  background: var(--success-background);
+  color: var(--success-text);
+  border-radius: var(--radius-control);
+}
+
+/* Style event */
+.event {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Style event content */
+.event-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Style event action */
+.event-action {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  align-self: stretch;
+  margin-top: auto;
+  padding-top: var(--size-18);
+}
+
+/* Style event action form */
+.event-action form {
+  margin: 0;
+  width: 100%;
+}
+
+/* Style student home */
+.student-home {
+  background: var(--surface);
+  color: var(--text-student);
+  padding: 0 var(--size-24) 36px;
+}
+
+/* Style student home section */
+.student-home section {
+  margin: 36px 0 50px;
+}
+
+/* Style student home p */
+.student-home p {
+  color: var(--text-student);
+  line-height: 1.6;
+}
+
+/* Style student home a */
+.student-home a {
+  color: var(--link-student);
+  font-weight: 700;
+}
+
+/* Style home banner and home categories */
+.home-banner,
+.home-categories {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Style home banner hidden and home categories hidden and category fallback hidden */
+.home-banner[hidden],
+.home-categories[hidden],
+.category-fallback[hidden] {
+  display: none;
+}
+
+/* Style home heading */
+.home-heading {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--heading-student);
+  margin: 0 0 var(--size-20);
+}
+
+/* Style home heading before */
+.home-heading::before {
+  content: '';
+  display: inline-block;
+  width: var(--size-12);
+  height: var(--size-12);
+  margin-right: var(--size-10);
+  border-radius: 50%;
+  background: var(--background-category);
+}
+
+/* Style home table wrap */
+.home-table-wrap {
+  overflow-x: auto;
+}
+
+/* Style student home table */
+.student-home table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+/* Style student home th and student home td */
+.student-home th,
+.student-home td {
+  border: 1px solid var(--border-table);
+  padding: var(--size-10);
+}
+
+/* Style student home th */
+.student-home th {
+  border-bottom: 2px solid var(--text-student);
+}
+
+/* Style student home ul */
+.student-home ul {
+  padding-left: var(--size-24);
+}
+
+/* Style category fallback */
+.category-fallback {
+  display: flex;
+  gap: var(--size-12);
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0!important;
+}
+
+/* Style category fallback li */
+.category-fallback li {
+  flex: 1 1 150px;
+  padding: var(--size-18);
+  border-radius: var(--size-8);
+  background: var(--background-category);
+  color: var(--text-category);
+  font-weight: 700;
+}
+
+/* Style home heading */
+.home-heading {
+  display: flex;
+  align-items: center;
+  gap: var(--size-8);
+}
+
+/* Style home heading before */
+.home-heading::before {
+  display: none;
+}
+
+/* Style home heading img */
+.home-heading img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  flex: none;
+}
+
+/* Style home categories */
+.home-categories {
+  display: grid;
+  grid-template-columns: repeat(5,minmax(0,1fr));
+  gap: var(--size-20);
+  align-items: start;
+}
+
+/* Style home categories img */
+.home-categories img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Style category records */
+.category-records {
+  margin: 40px 0;
+}
+
+/* Style category record */
+.category-record {
+  margin: 36px 0 var(--control-height);
+}
+
+/* Style category record h3 */
+.category-record h3 {
+  font-size: 1.15rem;
+  margin: 0 0 var(--size-14);
+}
+
+/* Style category table wrap */
+.category-table-wrap {
+  overflow-x: auto;
+}
+
+/* Style category record table */
+.category-record table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+/* Style category record th and category record td */
+.category-record th,
+.category-record td {
+  padding: var(--size-12) var(--size-14);
+  border-bottom: 1px solid var(--border-table);
+}
+
+/* Style category record th */
+.category-record th {
+  border-bottom: 2px solid var(--text-student);
+}
+
+/* Style category record tbody tr nth child(odd) */
+.category-record tbody tr:nth-child(odd) {
+  background: var(--background-table-stripe);
+}
+
+/* Style category record td last child and category record th last child */
+.category-record td:last-child,
+.category-record th:last-child {
+  white-space: nowrap;
+}
+
+/* Style admin category */
+.admin-category {
+  margin: var(--size-24) 0;
+}
+
+/* Style admin category h3 */
+.admin-category h3 {
+  margin-bottom: var(--size-12);
+  font-size: 1.25rem;
+}
+
+/* Style event content tag */
+.event-content .tag {
+  font-weight: 700;
+}
+
+/* Style tag category 0 */
+.tag.category-0 {
+  background: var(--category-blue);
+  color: var(--surface);
+}
+
+/* Style tag category 1 */
+.tag.category-1 {
+  background: var(--category-yellow);
+  color: var(--surface);
+}
+
+/* Style tag category 2 */
+.tag.category-2 {
+  background: var(--category-orange);
+  color: var(--surface);
+}
+
+/* Style tag category 3 */
+.tag.category-3 {
+  background: var(--category-purple);
+  color: var(--surface);
+}
+
+/* Style tag category 4 */
+.tag.category-4 {
+  background: var(--category-green);
+  color: var(--surface);
+}
+
+/* Style progress category 0 progress */
+.progress-category-0 progress {
+  accent-color: var(--category-blue);
+}
+
+/* Style progress category 1 progress */
+.progress-category-1 progress {
+  accent-color: var(--category-yellow);
+}
+
+/* Style progress category 2 progress */
+.progress-category-2 progress {
+  accent-color: var(--category-orange);
+}
+
+/* Style progress category 3 progress */
+.progress-category-3 progress {
+  accent-color: var(--category-purple);
+}
+
+/* Style progress category 4 progress */
+.progress-category-4 progress {
+  accent-color: var(--category-green);
+}
+
+/* === 5. Forms & Buttons === */
+
+/* Style filters */
+.filters {
+  margin: 25px 0;
+  flex-wrap: wrap;
+}
+
+/* Style filters input */
+.filters input {
+  flex: 1;
+  min-width: 180px;
+}
+
+/* Style filters select */
+.filters select {
+  width: auto;
+}
+
+/* Style label */
+label {
+  display: grid;
+  gap: var(--radius-control);
+  font-size: .9rem;
+  font-weight: 600;
+}
+
+/* Style input and select and textarea */
+input,
+select,
+textarea {
+  font: inherit;
+  border: 1px solid var(--border-input);
+  border-radius: var(--radius-control);
+  padding: var(--size-10);
+  background: var(--surface);
+  width: 100%;
+}
+
+/* Style textarea */
+textarea {
+  min-height: 100px;
+}
+
+/* Style button and button */
+button,
+.button {
+  font: inherit;
+  cursor: pointer;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: var(--brand-primary);
+  color: var(--surface);
+  padding: var(--size-10) var(--size-16);
+  text-decoration: none;
+  font-weight: 600;
+  display: inline-block;
+}
+
+/* Style button hover and button hover */
+button:hover,
+.button:hover {
+  background: var(--brand-dark);
+}
+
+/* Style secondary */
+.secondary {
+  color: var(--text-secondary);
+  background: var(--background-secondary);
+}
+
+/* Style link */
+.link {
+  background: none;
+  color: var(--text-navigation);
+  padding: 0;
+  font-weight: 400;
+}
+
+/* Style link hover */
+.link:hover {
+  background: none;
+}
+
+/* Style form image */
+.form-image {
+  width: 100%;
+  max-height: 240px;
+  object-fit: cover;
+  border-radius: var(--radius-control);
+}
+
+/* Style checkbox */
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--size-8);
+}
+
+/* Style checkbox input */
+.checkbox input {
+  width: auto;
+}
+
+/* Style admin actions */
+.admin-actions {
+  display: flex;
+  gap: var(--size-10);
+  flex-wrap: wrap;
+}
+
+/* Style filters label */
+.filters label {
+  flex: 1;
+  min-width: 180px;
+}
+
+/* Style filters button and filters a */
+.filters button,
+.filters>a {
+  align-self: end;
+}
+
+/* Style record edit */
+.record-edit {
+  display: flex;
+  align-items: end;
+  gap: var(--size-8);
+}
+
+/* Style record edit label */
+.record-edit label {
+  min-width: 150px;
+  font-size: .75rem;
+}
+
+/* Style google button and github button */
+.google-button,
+.github-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--size-12);
+  min-height: var(--control-height);
+  border: 1px solid var(--border-provider);
+  background: var(--surface);
+  color: var(--text-provider);
+}
+
+/* Style google button hover and github button hover */
+.google-button:hover,
+.github-button:hover {
+  background: var(--background-provider-hover);
+  border-color: var(--border-provider-hover);
+}
+
+/* Style google button focus visible and github button focus visible */
+.google-button:focus-visible,
+.github-button:focus-visible {
+  outline: 3px solid var(--focus-outline);
+  outline-offset: 2px;
+}
+
+/* Style google icon and github icon */
+.google-icon,
+.github-icon {
+  width: var(--size-20);
+  height: var(--size-20);
+  flex: none;
+}
+
+/* Style event register and event status */
+.event-register,
+.event-status {
+  font-size: 1rem;
+  font-weight: 700;
+  padding: var(--size-12) var(--size-20);
+  min-height: var(--control-height);
+  border-radius: 7px;
+}
+
+/* Style event register */
+.event-register {
+  width: 100%;
+}
+
+/* Style event status */
+.event-status {
+  display: inline-flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Style student add form */
+.student-add-form {
+  display: grid;
+  gap: var(--size-14);
+  margin: var(--size-20) 0;
+}
+
+/* Style student picker tools and student add controls */
+.student-picker-tools,
+.student-add-controls {
+  display: flex;
+  align-items: end;
+  gap: var(--size-10);
+  flex-wrap: wrap;
+}
+
+/* Style student picker tools span */
+.student-picker-tools span {
+  font-size: .9rem;
+  color: var(--text-muted);
+}
+
+/* Style student picker */
+.student-picker {
+  border: 1px solid var(--border-input);
+  border-radius: var(--radius-control);
+  max-height: 280px;
+  overflow-y: auto;
+  padding: var(--size-8) var(--size-12);
+}
+
+/* Style student picker legend */
+.student-picker legend {
+  font-size: .9rem;
+  font-weight: 600;
+}
+
+/* Style student option */
+.student-option {
+  display: flex;
+  align-items: center;
+  gap: var(--size-10);
+  padding: var(--size-10) var(--size-4);
+  border-bottom: 1px solid var(--border-row);
+  font-weight: 400;
+}
+
+/* Style student option last of type */
+.student-option:last-of-type {
+  border-bottom: 0;
+}
+
+/* Style student option input */
+.student-option input {
+  width: auto;
+  flex: none;
+}
+
+/* Style student option hidden */
+.student-option[hidden] {
+  display: none;
+}
+
+/* Style student add controls label */
+.student-add-controls label {
+  min-width: 180px;
+}
+
+/* Style record row record actions */
+.record-row>.record-actions {
+  flex: 0 1 auto;
+  display: flex;
+  align-items: flex-end;
+  gap: var(--size-8);
+}
+
+/* Style record actions form */
+.record-actions form {
+  margin: 0;
+}
+
+/* Style record actions record edit */
+.record-actions .record-edit {
+  width: auto;
+}
+
+/* Style record actions button */
+.record-actions button {
+  white-space: nowrap;
+}
+
+/* Style dashboard action hover */
+.dashboard-action:hover {
+  background: var(--category-blue);
+  color: var(--surface);
+}
+
+/* Style dashboard remove hover */
+.dashboard-remove:hover {
+  background: var(--status-danger);
+  color: var(--surface);
+}
+
+/* Style records dashboard hover */
+.records-dashboard:hover {
+  background: var(--status-confirmed);
+  color: var(--surface);
+}
+
+/* Style admin records button */
+.admin-records-button {
+  background: var(--status-confirmed);
+  color: var(--surface);
+}
+
+/* Style admin records button hover */
+.admin-records-button:hover {
+  background: var(--status-completed);
+  color: var(--surface);
+}
+
+/* Style admin create button */
+.admin-create-button {
+  background: var(--status-completed);
+  color: var(--surface);
+}
+
+/* Style admin create button hover */
+.admin-create-button:hover {
+  background: var(--status-confirmed);
+  color: var(--surface);
+}
+
+/* Style event register category 0 */
+.event-register.category-0 {
+  background: var(--category-blue);
+  color: var(--surface);
+}
+
+/* Style event register category 1 */
+.event-register.category-1 {
+  background: var(--category-yellow);
+  color: var(--surface);
+  font-weight: 800;
+}
+
+/* Style event register category 2 */
+.event-register.category-2 {
+  background: var(--category-orange);
+  color: var(--surface);
+}
+
+/* Style event register category 3 */
+.event-register.category-3 {
+  background: var(--category-purple);
+  color: var(--surface);
+}
+
+/* Style event register category 4 */
+.event-register.category-4 {
+  background: var(--category-green);
+  color: var(--surface);
+}
+
+/* Style event register hover */
+.event-register:hover {
+  filter: brightness(.85);
+}
+
+/* Style event status status confirmed and student status status confirmed */
+.event-status.status-confirmed,
+.student-status.status-confirmed {
+  background: var(--status-confirmed);
+  color: var(--surface);
+  font-weight: 700;
+}
+
+/* Style event status status completed and student status status completed */
+.event-status.status-completed,
+.student-status.status-completed {
+  background: var(--status-completed);
+  color: var(--surface);
+  font-weight: 700;
+}
+
+/* Style event status status cancelled and student status status cancelled */
+.event-status.status-cancelled,
+.student-status.status-cancelled {
+  background: var(--status-danger);
+  color: var(--surface);
+  font-weight: 700;
+}
+
+/* Style event status status waitlisted and student status status waitlisted */
+.event-status.status-waitlisted,
+.student-status.status-waitlisted {
+  background: var(--status-waitlisted);
+  color: var(--surface);
+  font-weight: 700;
+}
+
+/* Style event status status pending and student status status pending */
+.event-status.status-pending,
+.student-status.status-pending {
+  background: var(--status-pending);
+  color: var(--surface);
+  font-weight: 800;
+}
+
+/* Style history cancel hover */
+.history-cancel:hover {
+  background: var(--status-danger);
+  color: var(--surface);
+}
+
+/* === 6. Responsive Media Queries === */
+
+/* Adjust the layout for narrow screens */
+@media (max-width:600px) {
+  /* Style nav */
+  .nav {
+    align-items: flex-start;
+    gap: var(--size-16);
+    flex-direction: column;
+  }
+
+  /* Style nav */
+  nav {
+    flex-wrap: wrap;
+  }
+
+  /* Style heading */
+  .heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  /* Style row */
+  .row {
+    flex-wrap: wrap;
+  }
+
+  /* Style primary page headings */
+  h1 {
+    font-size: 1.8rem;
+  }
+}
+
+/* Adjust the layout for narrow screens */
+@media (max-width:600px) {
+  /* Constrain and space the main content */
+  main {
+    padding: 30px var(--size-16) 60px;
+  }
+
+  /* Style grid */
+  .grid {
+    grid-template-columns: minmax(0,1fr);
+    gap: var(--size-16);
+  }
+
+  /* Style filters */
+  .filters {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  /* Style filters input and filters select and filters button */
+  .filters input,
+  .filters select,
+  .filters button {
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* Style event content */
+  .event-content {
+    padding: var(--size-20);
+  }
+
+  /* Style event content form button */
+  .event-content form button {
+    width: 100%;
+    min-height: var(--control-height);
+  }
+}
+
+/* Adjust the layout for narrow screens */
+@media (max-width:600px) {
+  /* Style record edit */
+  .record-edit {
+    width: 100%;
+  }
+
+  /* Style record edit label */
+  .record-edit label {
+    flex: 1;
+  }
+
+  /* Style filters button and filters a */
+  .filters button,
+  .filters>a {
+    align-self: auto;
+  }
+}
+
+/* Adjust the layout for narrow screens */
+@media (max-width:600px) {
+  /* Style brand logo */
+  .brand-logo {
+    width: min(360px,calc(100vw - var(--control-height)));
+  }
+}
+
+/* Adjust the layout for narrow screens */
+@media (max-width:600px) {
+  /* Style record row record actions */
+  .record-row>.record-actions {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+
+  /* Style record actions record edit */
+  .record-actions .record-edit {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* Style record actions record edit label */
+  .record-actions .record-edit label {
+    min-width: 0;
+  }
+
+  /* Style record actions record edit select */
+  .record-actions .record-edit select {
+    min-width: 0;
+  }
+}
+
+/* Adjust the layout for narrow screens */
+@media (max-width:600px) {
+  /* Style student home */
+  .student-home {
+    padding: 0 0 var(--size-24);
+  }
+
+  /* Style student home section */
+  .student-home section {
+    margin: 28px 0 36px;
+  }
+
+  /* Style student home table */
+  .student-home table {
+    min-width: var(--container-narrow);
+  }
+}
+
+/* Adjust the layout for narrow screens */
+@media (max-width:600px) {
+  /* Style home categories */
+  .home-categories {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: var(--size-12);
+  }
+}
+
+/* Adjust the layout for narrow screens */
+@media (max-width:600px) {
+  /* Style category record table */
+  .category-record table {
+    min-width: var(--container-narrow);
+  }
+}

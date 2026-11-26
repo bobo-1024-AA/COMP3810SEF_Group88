@@ -1,3 +1,4 @@
+<%# Manage student records for one activity. -%>
 <div class="heading"><div><h1><%= event.name %></h1><p><%= event.category %> · <%= new Date(event.date).toLocaleString('en-GB',{timeZone:'Asia/Hong_Kong'}) %> HKT<%= event.removed?' · Event removed':'' %></p></div><a class="button secondary records-dashboard" href="/admin">SAO dashboard</a></div>
 <% if(updated){ %><p class="success" role="status">Activity records updated.</p><% } %>
 <% if(added || skipped){ %><p class="success" role="status"><%= added %> record(s) added or restored. <%= skipped %> already had a record and were skipped.</p><% } %>
@@ -10,5 +11,40 @@
 </div>
 <h2>Student records (<%= records.length %>)</h2><div class="card"><% if(!records.length){ %><p>No student records for this activity yet.</p><% } %><% records.forEach(r=>{ %><div class="row record-row"><div><strong><%= r.student?.name || 'Student unavailable' %></strong><p><%= r.student?.email || '' %> · Registered <%= new Date(r.createdAt).toLocaleDateString('en-GB',{timeZone:'Asia/Hong_Kong'}) %></p></div><div class="record-actions"><form class="record-edit" method="post" action="/admin/records/<%= r._id %>"><input type="hidden" name="returnToEvent" value="1"><label>Status for <%= r.student?.name || 'student' %><select name="status"><% ['pending','confirmed','waitlisted','completed','cancelled'].forEach(s=>{ %><option value="<%= s %>" <%= r.status===s?'selected':'' %>><%= s[0].toUpperCase()+s.slice(1) %></option><% }) %></select></label><button>Save</button></form><form method="post" action="/admin/events/<%= event._id %>/records/<%= r._id %>/delete" onsubmit="return confirm('Delete this student record? Completed hours will be removed from the student’s progress.')"><button type="submit" class="secondary">Delete</button></form></div></div><% }) %></div>
 <script>
-(()=>{const search=document.getElementById('student-search'),options=[...document.querySelectorAll('.student-option')],count=document.getElementById('student-selection-count'),empty=document.getElementById('student-no-results');function updateCount(){count.textContent=options.filter(option=>option.querySelector('input').checked).length+' selected'}function filter(){const term=search.value.trim().toLocaleLowerCase();let visible=0;for(const option of options){option.hidden=!option.dataset.search.includes(term);if(!option.hidden)visible++}empty.hidden=visible>0}search.addEventListener('input',filter);for(const option of options)option.querySelector('input').addEventListener('change',updateCount);document.getElementById('select-visible').addEventListener('click',()=>{for(const option of options)if(!option.hidden)option.querySelector('input').checked=true;updateCount()});document.getElementById('clear-selected').addEventListener('click',()=>{for(const option of options)option.querySelector('input').checked=false;updateCount()})})();
+(() => {
+  const search = document.getElementById('student-search'),
+    options = [...document.querySelectorAll('.student-option')],
+    count = document.getElementById('student-selection-count'),
+    empty = document.getElementById('student-no-results');
+  // Keep the selected-student count in sync with the checkboxes.
+  function updateCount() {
+    count.textContent =
+      options.filter((option) => option.querySelector('input').checked).length +
+      ' selected';
+  }
+  // Filter visible students without clearing existing selections.
+  function filter() {
+    const term = search.value.trim().toLocaleLowerCase();
+    let visible = 0;
+    for (const option of options) {
+      option.hidden = !option.dataset.search.includes(term);
+      if (!option.hidden) visible++;
+    }
+    empty.hidden = visible > 0;
+  }
+  search.addEventListener('input', filter);
+  for (const option of options)
+    option.querySelector('input').addEventListener('change', updateCount);
+  // Apply bulk selection only to currently visible students.
+  document.getElementById('select-visible').addEventListener('click', () => {
+    for (const option of options)
+      if (!option.hidden) option.querySelector('input').checked = true;
+    updateCount();
+  });
+  // Clear selections across both visible and hidden students.
+  document.getElementById('clear-selected').addEventListener('click', () => {
+    for (const option of options) option.querySelector('input').checked = false;
+    updateCount();
+  });
+})();
 </script>

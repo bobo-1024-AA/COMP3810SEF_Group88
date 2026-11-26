@@ -1,3 +1,4 @@
+<%# Search and update student activity records. -%>
 <div class="heading"><a class="button secondary records-dashboard" href="/admin">SAO dashboard</a></div>
 <% if(updated){ %><p class="success" role="status">Activity record updated.</p><% } %>
 <form class="filters" method="get" action="/admin/records"><label>Search by student name, email or activity<input type="search" name="search" value="<%= search %>"></label><label>Status<select name="status"><option value="">All statuses</option><% ['pending','confirmed','waitlisted','completed','cancelled'].forEach(s=>{ %><option value="<%= s %>" <%= status===s?'selected':'' %>><%= s[0].toUpperCase()+s.slice(1) %></option><% }) %></select></label><button>Search</button><a class="button secondary dashboard-action" href="/admin/records">Clear</a></form>
