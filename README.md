@@ -123,10 +123,13 @@ The application provides an event API for the course assignment. These endpoints
 | --- | --- | --- | --- |
 | Create | `POST` | `/api/events` | `201 Created`, event JSON |
 | Read | `GET` | `/api/events` | `200 OK`, array of active events |
+| Read one | `GET` | `/api/events/:id` | `200 OK`, event JSON; `404 Not Found` if absent or removed |
 | Update | `PUT` | `/api/events/:id` | `200 OK`, updated event JSON |
 | Delete | `DELETE` | `/api/events/:id` | `204 No Content` |
 
 The examples use a local server and disposable data. For a controlled cloud demonstration, replace `http://localhost:3000` with `https://comp3810sef-group88.onrender.com`. **POST, PUT and DELETE change the selected database**; do not use them against shared data without coordinating with its owners. `curl -i` shows the HTTP status and headers.
+
+To retrieve one active event after setting `EVENT_ID`, run `curl "$BASE_URL/api/events/$EVENT_ID"`. An invalid MongoDB ID returns `400 Bad Request`.
 
 ### Event fields
 

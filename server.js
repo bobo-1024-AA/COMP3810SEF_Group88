@@ -1074,6 +1074,15 @@ app.get(
     res.json(await Event.find(q));
   }),
 );
+// Return one active activity by its ID. (GET /api/events/:id)
+app.get(
+  '/api/events/:id',
+  asyncRoute(async (req, res) => {
+    const event = await Event.findOne({ _id: req.params.id, removed: false });
+    if (!event) return res.sendStatus(404);
+    res.json(event);
+  }),
+);
 // Create an activity through the REST API. (POST /api/events)
 app.post(
   '/api/events',
