@@ -181,7 +181,7 @@ Form routes use POST for edits and removals; the separate REST examples below de
 
 The assignment requires an unauthenticated API using GET, POST, PUT and DELETE. The endpoints below operate on activity documents. They are separate from the SAO web forms, which require login and use form POST requests. REST POST and PUT accept JSON; they do not accept image uploads.
 
-| Operation | HTTP method | URI | Successful response |
+| Operation | HTTP method | URI | Successful response `-i` |
 | --- | --- | --- | --- |
 | Create | POST | `/api/events` | `201 Created` and activity JSON |
 | Read all | GET | `/api/events` | `200 OK` and an array of active activities |
