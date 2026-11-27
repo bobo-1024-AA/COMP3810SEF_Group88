@@ -12,12 +12,21 @@ Repository: https://github.com/bobo-1024-AA/COMP3810SEF_Group88
 
 | Member | Student ID | Division of work |
 | --- | --- | --- |
-| KWOK Yiu Po | 13487029 | Presentation, RESTful API, Google and GitHub OAuth, cloud deployment, SAO dashboard |
-| LI Chak Fai | 13428853 | Part F design; data preprocessing, including web scraping and image design |
+| KWOK Yiu Po | 13487029 | Presentation, RESTful content, OAuth, cloud deployment, SAO dashboard |
+| LI Chak Fai | 13428853 | Part F design; data preprocessing, including web scraping and images design |
 | Cai Zhiqing | 13420369 | Part A design; CSS and UI design |
 | Tse Yuen Tung | 13496260 | Part I design; CSS and UI design |
 | HU Tianle | 13357905 | Part T design; local deployment and testing |
-| CHEN Zihan | 13484353 | Part H design; SAO dashboard and user acceptance testing (UAT) |
+| CHEN Zihan | 13484353 | Part H design; SAO dashboard and SAO Statistics |
+
+- **Part F:** Future Skills & Intelligence
+- **Part A:** Aesthetics & Spirituality
+- **Part I:** Igniting & Sports
+- **Part T:** Temperance & Justice
+- **Part H:** Humanity & Love
+- **OAuth:** Google and GitHub
+- **RESTful** RESTful CRUD services (HTTP - GET, POST, PUT, DELETE)
+
 
 ## Project files and technologies
 
@@ -25,7 +34,6 @@ Repository: https://github.com/bobo-1024-AA/COMP3810SEF_Group88
 - [`views/`](views/): EJS templates for login, registration, student pages, event management, records and statistics.
 - [`public/`](public/): CSS, logos and other static assets.
 - [`package.json`](package.json) and [`package-lock.json`](package-lock.json): Dependencies, Node requirement and the start script.
-- [`.env.example`](.env.example): Configuration template. Keep actual credentials in an untracked `.env` or hosting environment settings.
 
 ### Dependencies
 
@@ -39,7 +47,7 @@ Repository: https://github.com/bobo-1024-AA/COMP3810SEF_Group88
 | [dotenv](https://www.npmjs.com/package/dotenv) | Loading local environment variables |
 | [multer](https://www.npmjs.com/package/multer) | Event image uploads |
 
-Google and GitHub OAuth are implemented using application routes; Passport is not a dependency.
+Google and GitHub OAuth are implemented.
 
 ## How to start
 
@@ -50,21 +58,19 @@ Google and GitHub OAuth are implemented using application routes; Passport is no
 1. Clone the repository and enter the project directory:
 
    ```sh
-   git clone https://github.com/bobo-1024-AA/COMP3810SEF_Group88.git
-   cd COMP3810SEF_Group88
+   git clone https://github.com/bobo-1024-AA/COMP3810SEF_Group88
    ```
 
-2. Install the locked dependencies and create a local configuration:
+2. **Delete the package-lock.json.** Install the dependencies and create a local configuration:
 
    ```sh
-   npm ci
-   cp .env.example .env
+   npm install
    ```
 
-3. Edit `.env`: set `MONGODB_URI`, a strong unique `SESSION_SECRET`, and `SAO_EMAIL` / `SAO_PASSWORD` for the administrator. The default `PORT` is 3000. Keep database credentials and session secrets out of version control.
-4. Start the application with `npm start` and open `http://localhost:3000`.
+3. Edit `.env`.
 
-The server creates the SAO account only if its email does not already exist. Changing `SAO_PASSWORD` later does not reset an existing account. Do not use the example credentials for deployment.
+
+4. Start the application with `npm start` and open `http://localhost:3000`.
 
 ### Cloud deployment
 
@@ -92,8 +98,7 @@ The following accounts were supplied for the project demonstration:
 | SAO | `hkmusao@live.hkmu.edu.hk` | `hkmusao@min` |
 | Student | `student@live.hkmu.edu.hk` | `COMP3810sef` |
 
-Open `/login`, enter the relevant email and password, and select **Log in**. These accounts must exist in the database used by the running server; a separate local database does not automatically contain accounts from the deployed website.
-
+- Open `/login`, enter email and password, and click **Log in**.
 - Open `/register` to create a student account with name, email and a password of at least eight characters; sign in at `/login`.
 - Google and GitHub buttons appear when their respective OAuth settings are configured. Existing accounts are not automatically linked to OAuth identities.
 - Use **Log out** to end the session. Email/password registration does not verify email addresses.
@@ -183,9 +188,13 @@ The assignment requires an unauthenticated API using GET, POST, PUT and DELETE. 
 | Update | PUT | `/api/events/:id` | `200 OK` and updated activity JSON |
 | Delete | DELETE | `/api/events/:id` | `204 No Content` |
 
-These routes do **not** require authentication. Anyone with access to the server can create, update or remove activities; use a test database for the following demonstration. When localhost and the deployed website share a MongoDB database, changes made locally also affect the website. DELETE marks an activity as removed while retaining its registration history.
+When localhost and the deployed website share a MongoDB database, changes made locally also affect the website. 
 
-Both POST and PUT require the full editable activity: `name`, `description`, `date`, `location`, `category`, `capacity`, `deadline` and `hours`. Use an exact category name from the progress section, a positive integer capacity, and at least 0.1 hours. The deadline must not be later than the activity date. PUT is a full update of these fields, not a partial update. Dates below are in UTC; `06:00Z` is 14:00 in Hong Kong.
+Both **POST** and **PUT** require the full editable activity: `name`, `description`, `date`, `location`, `category`, `capacity`, `deadline` and `hours`.
+- Use an exact category name from the progress section, a positive integer capacity, and at least 0.1 hours.
+- The deadline must not be later than the activity date.
+- PUT is a full update of these fields, not a partial update.
+- Dates below are in UTC; `06:00Z` is 14:00 in Hong Kong.
 
 ### REST API demonstration
 
@@ -196,7 +205,7 @@ cd COMP3810SEF_Group88
 npm start
 ```
 
-In terminal 2, run the following commands in order. The activity is disposable test data; the final command removes it. The JSON API does not add an image.
+In terminal 2, run the following commands in order. The activity is disposable test data; the final command removes it. The **JSON** API does not add an image.
 
 **1. Create — HTTP POST `/api/events`**
 
@@ -215,11 +224,11 @@ curl -X POST "http://localhost:3000/api/events" \
   }'
 ```
 
-Copy the returned `_id` into the variable below. Use the ID returned by this POST; example IDs in other documents refer to different databases. Do not include spaces inside the quotes.
-
+Copy the returned `_id` into the variable below.
 ```bash
 EVENT_ID="paste-the-returned-id-here"
 ```
+- Do not include spaces inside the quotes.
 
 **2. Read all — HTTP GET `/api/events`**
 
@@ -280,10 +289,3 @@ curl -X DELETE "http://localhost:3000/api/events/$EVENT_ID"
 ```
 
 A successful delete returns `204 No Content`, so `curl` prints no response body. A later GET for this ID returns `404`. For debugging, add `-i` to a curl command to display the HTTP status and headers.
-
-
-## Limitations and verification
-
-Capacity and waitlist operations use separate database queries, so simultaneous requests can race. The application needs atomic reservation/transaction handling and further security hardening before real-world use. OAuth sign-in and cloud deployment need external configuration and must be verified in the target environment.
-
-The repository currently defines `npm start` but no automated test script. Validate the intended student and SAO workflows against a suitable test database. Use disposable data for CRUD demonstrations.
