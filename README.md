@@ -290,4 +290,7 @@ Confirm that `category` is `Future Skills & Intelligence`.
 curl -X DELETE "http://localhost:3000/api/events/$EVENT_ID"
 ```
 
-A successful delete returns `204 No Content`, so `curl` prints no response body. A later GET for this ID returns `404`. For debugging, add `-i` to a curl command to display the HTTP status and headers.
+A successful delete returns `204 No Content`, so `curl` prints no response body. A later GET for this ID returns `404`. 
+
+## For debugging
+Add `-i` to a curl command to display the HTTP status and headers.
