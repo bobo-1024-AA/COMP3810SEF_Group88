@@ -10,18 +10,14 @@ Repository: https://github.com/bobo-1024-AA/COMP3810SEF_Group88
 - **Group:** 88
 - **Live application:** https://comp3810sef-group88.onrender.com
 
-| Member | Student ID |
-| --- | --- |
-| KWOK Yiu Po | 13487029 |
-| LI Chak Fai | 13428853 |
-| Cai Zhiqing | 13420369 |
-| Tse Yuen Tung | 13496260 |
-| HU Tianle | 13357905 |
-| CHEN Zihan | 13484353 |
-
-**Division of work:** To be completed by the group.
-
-The member-to-role assignments must be supplied by the group before submission.
+| Member | Student ID | Division of work |
+| --- | --- | --- |
+| KWOK Yiu Po | 13487029 | Presentation, RESTful API, Google and GitHub OAuth, cloud deployment, SAO dashboard |
+| LI Chak Fai | 13428853 | Part F design; data preprocessing, including web scraping and image design |
+| Cai Zhiqing | 13420369 | Part A design; CSS and UI design |
+| Tse Yuen Tung | 13496260 | Part I design; CSS and UI design |
+| HU Tianle | 13357905 | Part T design; local deployment and testing |
+| CHEN Zihan | 13484353 | Part H design; SAO dashboard and user acceptance testing (UAT) |
 
 ## Project files and technologies
 
@@ -65,7 +61,7 @@ Google and GitHub OAuth are implemented using application routes; Passport is no
    cp .env.example .env
    ```
 
-3. Edit `.env`: set `MONGODB_URI`, a strong unique `SESSION_SECRET`, and `SAO_EMAIL` / `SAO_PASSWORD` for the administrator. The default `PORT` is 3000. Never commit or share credentials.
+3. Edit `.env`: set `MONGODB_URI`, a strong unique `SESSION_SECRET`, and `SAO_EMAIL` / `SAO_PASSWORD` for the administrator. The default `PORT` is 3000. Keep database credentials and session secrets out of version control.
 4. Start the application with `npm start` and open `http://localhost:3000`.
 
 The server creates the SAO account only if its email does not already exist. Changing `SAO_PASSWORD` later does not reset an existing account. Do not use the example credentials for deployment.
@@ -88,6 +84,15 @@ Create a GitHub OAuth App and set its authorization callback URL to `https://you
 ## Operation guide
 
 ### Login and registration
+
+The following accounts were supplied for the project demonstration:
+
+| Role | Email | Password |
+| --- | --- | --- |
+| SAO | `hkmusao@live.hkmu.edu.hk` | `hkmusao@min` |
+| Student | `student@live.hkmu.edu.hk` | `COMP3810sef` |
+
+Open `/login`, enter the relevant email and password, and select **Log in**. These accounts must exist in the database used by the running server; a separate local database does not automatically contain accounts from the deployed website.
 
 - Open `/register` to create a student account with name, email and a password of at least eight characters; sign in at `/login`.
 - Google and GitHub buttons appear when their respective OAuth settings are configured. Existing accounts are not automatically linked to OAuth identities.
