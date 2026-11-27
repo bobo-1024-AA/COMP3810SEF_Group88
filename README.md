@@ -12,7 +12,7 @@ Repository: https://github.com/bobo-1024-AA/COMP3810SEF_Group88
 
 | Member | Student ID | Division of work |
 | --- | --- | --- |
-| KWOK Yiu Po | 13487029 | Presentation, RESTful content, OAuth, cloud deployment, SAO dashboard |
+| KWOK Yiu Po | 13487029 | Presentation, RESTful CRUD, OAuth, cloud deployment, SAO dashboard |
 | LI Chak Fai | 13428853 | Part F design; data preprocessing, including web scraping and images design |
 | Cai Zhiqing | 13420369 | Part A design; CSS and UI design |
 | Tse Yuen Tung | 13496260 | Part I design; CSS and UI design |
@@ -25,7 +25,7 @@ Repository: https://github.com/bobo-1024-AA/COMP3810SEF_Group88
 - **Part T:** Temperance & Justice
 - **Part H:** Humanity & Love
 - **OAuth:** Google and GitHub
-- **RESTful** RESTful CRUD services (HTTP - GET, POST, PUT, DELETE)
+- **RESTful CRUD services:** HTTP - GET, POST, PUT, DELETE
 
 
 ## Project files and technologies
