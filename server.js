@@ -120,7 +120,10 @@ function loginUser(req, res, next, user) {
   req.session.regenerate((err) => {
     if (err) return next(err);
     req.session.userId = user.id;
-    res.redirect(user.role === 'student' ? '/' : '/events');
+    req.session.save((saveErr) => {
+      if (saveErr) return next(saveErr);
+      res.redirect(user.role === 'student' ? '/' : '/events');
+    });
   });
 }
 // Show the sign-in page. (GET /login)
@@ -179,7 +182,7 @@ app.post(
   }),
 );
 // Start GitHub OAuth with state and PKCE. (GET /auth/github)
-app.get('/auth/github', (req, res) => {
+app.get('/auth/github', (req, res, next) => {
   if (!githubEnabled)
     return res.status(503).send('GitHub sign-in is not configured.');
   const state = crypto.randomBytes(32).toString('hex');
@@ -197,8 +200,17 @@ app.get('/auth/github', (req, res) => {
       .digest('base64url'),
     code_challenge_method: 'S256',
   });
-  res.redirect('https://github.com/login/oauth/authorize?' + params);
+  // Persist the state and PKCE verifier before leaving for GitHub.
+  req.session.save((err) => {
+    if (err) return next(err);
+    res.redirect('https://github.com/login/oauth/authorize?' + params);
+  });
 });
+// Display GitHub sign-in errors on the login page so the user can retry.
+function githubSignInError(res, message, status = 400) {
+  res.locals.error = message;
+  return res.status(status).render('layout', { view: 'login' });
+}
 // Verify the GitHub OAuth response and sign in the user. (GET /auth/github/callback)
 app.get(
   '/auth/github/callback',
@@ -212,52 +224,75 @@ app.get(
       !state ||
       !verifier ||
       typeof req.query.state !== 'string' ||
-      req.query.state !== state ||
-      typeof req.query.code !== 'string' ||
-      !req.query.code
+      req.query.state !== state
     )
-      return res
-        .status(400)
-        .send('GitHub sign-in could not be verified. Please try again.');
-    const tokenRes = await fetch(
-      'https://github.com/login/oauth/access_token',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
+      return githubSignInError(
+        res,
+        'GitHub sign-in could not be verified. Start again from this login page, using the same website address and allowing cookies.',
+      );
+    if (req.query.error || typeof req.query.code !== 'string' || !req.query.code)
+      return githubSignInError(
+        res,
+        'GitHub sign-in was cancelled or no authorization code was returned. Please try again.',
+      );
+    let tokenRes;
+    try {
+      tokenRes = await fetch(
+        'https://github.com/login/oauth/access_token',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify({
+            client_id: process.env.GITHUB_CLIENT_ID,
+            client_secret: process.env.GITHUB_CLIENT_SECRET,
+            code: req.query.code,
+            redirect_uri: baseUrl() + '/auth/github/callback',
+            code_verifier: verifier,
+          }),
+          signal: AbortSignal.timeout(10000),
         },
-        body: JSON.stringify({
-          client_id: process.env.GITHUB_CLIENT_ID,
-          client_secret: process.env.GITHUB_CLIENT_SECRET,
-          code: req.query.code,
-          redirect_uri: baseUrl() + '/auth/github/callback',
-          code_verifier: verifier,
-        }),
-        signal: AbortSignal.timeout(10000),
-      },
-    );
-    if (!tokenRes.ok) return res.status(400).send('GitHub sign-in failed.');
+      );
+    } catch (err) {
+      return githubSignInError(
+        res,
+        'Could not contact GitHub. Please try again.',
+        502,
+      );
+    }
+    if (!tokenRes.ok)
+      return githubSignInError(res, 'GitHub sign-in failed. Please try again.');
     const tokens = await tokenRes.json();
     if (typeof tokens.access_token !== 'string' || !tokens.access_token)
-      return res.status(400).send('GitHub sign-in failed.');
+      return githubSignInError(res, 'GitHub sign-in failed. Please try again.');
     const headers = {
       Authorization: 'Bearer ' + tokens.access_token,
       Accept: 'application/vnd.github+json',
       'User-Agent': 'Metro-FAITH',
     };
-    const [profileRes, emailsRes] = await Promise.all([
-      fetch('https://api.github.com/user', {
-        headers,
-        signal: AbortSignal.timeout(10000),
-      }),
-      fetch('https://api.github.com/user/emails', {
-        headers,
-        signal: AbortSignal.timeout(10000),
-      }),
-    ]);
+    let profileRes, emailsRes;
+    try {
+      [profileRes, emailsRes] = await Promise.all([
+        fetch('https://api.github.com/user', {
+          headers,
+          signal: AbortSignal.timeout(10000),
+        }),
+        fetch('https://api.github.com/user/emails', {
+          headers,
+          signal: AbortSignal.timeout(10000),
+        }),
+      ]);
+    } catch (err) {
+      return githubSignInError(
+        res,
+        'Could not contact GitHub. Please try again.',
+        502,
+      );
+    }
     if (!profileRes.ok || !emailsRes.ok)
-      return res.status(400).send('GitHub sign-in failed.');
+      return githubSignInError(res, 'GitHub sign-in failed. Please try again.');
     const profile = await profileRes.json(),
       emails = await emailsRes.json();
     const primary =
@@ -274,19 +309,19 @@ app.get(
       !primary ||
       !/^\S+@\S+\.\S+$/.test(primary.email.trim())
     )
-      return res
-        .status(400)
-        .send('GitHub must provide a verified primary email.');
+      return githubSignInError(
+        res,
+        'GitHub must provide a verified primary email.',
+      );
     const githubId = String(profile.id),
       email = primary.email.toLowerCase().trim();
     let user = await User.findOne({ githubId });
     if (!user) {
       if (await User.findOne({ email }))
-        return res
-          .status(400)
-          .send(
-            'An account with this email already exists. Please use its original login method.',
-          );
+        return githubSignInError(
+          res,
+          'An account with this email already exists. Please use its original login method.',
+        );
       try {
         user = await User.create({
           name:
@@ -299,11 +334,10 @@ app.get(
         });
       } catch (e) {
         if (e.code === 11000)
-          return res
-            .status(400)
-            .send(
-              'This account already exists. Please use its original login method.',
-            );
+          return githubSignInError(
+            res,
+            'This account already exists. Please use its original login method.',
+          );
         throw e;
       }
     }
