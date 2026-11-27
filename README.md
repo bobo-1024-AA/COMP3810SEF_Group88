@@ -8,6 +8,8 @@ Repository: https://github.com/bobo-1024-AA/COMP3810SEF_Group88
 
 This is a student project, not an official HKMU service. The project goals and levels are separate from official award criteria.
 
+Metro Faith Official: https://hkmu-hk.campuslabs.com/engage
+
 - **Project name:** Metro Faith 88
 - **Group:** 88
 - **Live application:** https://comp3810sef-group88.onrender.com
