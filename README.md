@@ -1,12 +1,14 @@
-# Metro Faith Remake — COMP3810SEF Group 88
+# Metro Faith 88 — COMP3810SEF Group 88
 
 Repository: https://github.com/bobo-1024-AA/COMP3810SEF_Group88
 
 ## Project information
 
-**Metro FAITH** is a server-side course project that helps students discover activities, register and track their engagement across five categories. SAO staff can manage activities, student records and statistics. This is a student project, not an official HKMU service. The project goals and levels are separate from official award criteria.
+**Metro FAITH** is a server-side course project that helps students discover activities, register and track their engagement across five categories. SAO staff can manage activities, student records and statistics. 
 
-- **Project name:** Metro Faith Remake
+This is a student project, not an official HKMU service. The project goals and levels are separate from official award criteria.
+
+- **Project name:** Metro Faith 88
 - **Group:** 88
 - **Live application:** https://comp3810sef-group88.onrender.com
 
