@@ -42,6 +42,18 @@ This is a student project, not an official HKMU service. The project goals and l
 - [`public/`](public/): CSS, logos and other static assets.
 - [`package.json`](package.json) and [`package-lock.json`](package-lock.json): Dependencies, Node requirement and the start script.
 
+### Data models
+
+The application uses three Mongoose models to define and access MongoDB documents. `server.js` imports these models for authentication, activity management, registration and the REST API.
+
+| File | Model | Purpose and main fields |
+| --- | --- | --- |
+| [`models/User.js`](models/User.js) | `User` | Stores a user's name, unique email, optional password and OAuth identifiers, and role (`student` or `sao`). |
+| [`models/Event.js`](models/Event.js) | `Event` | Stores activity details, including name, description, date, location, category, capacity, deadline, engagement hours, optional image and removal status. Its category must match the shared list in [`config/categories.js`](config/categories.js). |
+| [`models/Registration.js`](models/Registration.js) | `Registration` | Links a student (`User`) to an activity (`Event`) and stores the registration status and creation time. A compound unique index prevents more than one registration document for the same student and activity. |
+
+`Registration` refers to the `User` and `Event` models by MongoDB ObjectId. Its status can be `pending`, `confirmed`, `waitlisted`, `completed` or `cancelled`. Events marked as removed are hidden from active event listings while existing registration history is retained.
+
 ### Dependencies
 
 | Package | Purpose |
