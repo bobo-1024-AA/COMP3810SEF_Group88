@@ -105,8 +105,6 @@ Create a Google OAuth web application, configure its consent screen, and add `ht
 
 Create a GitHub OAuth App and set its authorization callback URL to `https://your-app.example.com/auth/github/callback` (replace the origin with your app URL). Set `APP_BASE_URL`, `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` in the environment; never commit credentials. The button appears when all three are configured. GitHub sign-in creates a student account and requires a verified primary GitHub email. Existing accounts are not automatically linked; use their original sign-in method. Live sign-in requires GitHub access and valid OAuth App credentials.
 
-For the OAuth session to survive the redirect, open the application using the same scheme and host as `APP_BASE_URL`. Configure the GitHub OAuth App's callback for that environment: for example, `http://localhost:3000/auth/github/callback` for local development or `https://your-app.example.com/auth/github/callback` for deployment. Localhost and the deployed site have separate browser cookies; use an OAuth App and configuration appropriate for each environment. In local HTTP development, do not set `NODE_ENV=production`, because production sessions use secure cookies that require HTTPS. If verification fails, start again from the login page, allow cookies, and check the origin and callback configuration.
-
 
 ## Operation guide
 
