@@ -2,13 +2,14 @@
 
 Repository: https://github.com/bobo-1024-AA/COMP3810SEF_Group88
 
+## Official Service
+Metro Faith Official: https://hkmu-hk.campuslabs.com/engage
+
 ## Project information
 
 **Metro FAITH** is a server-side course project that helps students discover activities, register and track their engagement across five categories. SAO staff can manage activities, student records and statistics. 
 
 This is a student project, not an official HKMU service. The project goals and levels are separate from official award criteria.
-
-Metro Faith Official: https://hkmu-hk.campuslabs.com/engage
 
 - **Project name:** Metro Faith 88
 - **Group:** 88
