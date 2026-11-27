@@ -35,7 +35,9 @@ This is a student project, not an official HKMU service. The project goals and l
 
 ## Project files and technologies
 
-- [`server.js`](server.js): Express configuration, MongoDB schemas, authentication, student and SAO routes, and the REST API. The `User`, `Event` and `Registration` schemas are defined here.
+- [`server.js`](server.js): Express configuration, authentication, student and SAO routes, and the REST API.
+- [`models/`](models/): Mongoose schemas and models for users, activities and registrations (`User.js`, `Event.js` and `Registration.js`).
+- [`config/categories.js`](config/categories.js): Shared activity categories used by event validation and the application.
 - [`views/`](views/): EJS templates for login, registration, student pages, event management, records and statistics.
 - [`public/`](public/): CSS, logos and other static assets.
 - [`package.json`](package.json) and [`package-lock.json`](package-lock.json): Dependencies, Node requirement and the start script.

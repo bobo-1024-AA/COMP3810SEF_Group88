@@ -10,62 +10,10 @@ const path = require('path');
 const crypto = require('crypto');
 const app = express();
 // === Shared activity categories and database models ===
-const categories = [
-  'Future Skills & Intelligence',
-  'Aesthetics & Spirituality',
-  'Igniting & Sports',
-  'Temperance & Justice',
-  'Humanity & Love',
-];
-// Store account details and sign-in provider identifiers.
-const userSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    lowercase: true,
-    trim: true,
-  },
-  password: { type: String },
-  googleId: { type: String, unique: true, sparse: true },
-  githubId: { type: String, unique: true, sparse: true },
-  role: { type: String, enum: ['student', 'sao'], default: 'student' },
-});
-// Store activity details, capacity, and optional image data.
-const eventSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  description: { type: String, required: true },
-  date: { type: Date, required: true },
-  location: { type: String, required: true },
-  category: { type: String, enum: categories, required: true },
-  capacity: { type: Number, min: 1, required: true },
-  deadline: { type: Date, required: true },
-  hours: { type: Number, min: 0.1, required: true },
-  image: { data: { type: Buffer, select: false }, contentType: String },
-  hasImage: { type: Boolean, default: false },
-  removed: { type: Boolean, default: false },
-});
-// Track a student's status for an activity.
-const registrationSchema = new mongoose.Schema({
-  event: { type: mongoose.Schema.Types.ObjectId, ref: 'Event', required: true },
-  student: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  },
-  status: {
-    type: String,
-    enum: ['pending', 'confirmed', 'waitlisted', 'completed', 'cancelled'],
-    default: 'pending',
-  },
-  createdAt: { type: Date, default: Date.now },
-});
-// Allow only one registration per student and activity.
-registrationSchema.index({ event: 1, student: 1 }, { unique: true });
-const User = mongoose.model('User', userSchema),
-  Event = mongoose.model('Event', eventSchema),
-  Registration = mongoose.model('Registration', registrationSchema);
+const categories = require('./config/categories');
+const User = require('./models/User');
+const Event = require('./models/Event');
+const Registration = require('./models/Registration');
 // === Express, sessions, and request context ===
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: false }));
