@@ -3,7 +3,7 @@
 Repository: https://github.com/bobo-1024-AA/COMP3810SEF_Group88
 
 ## Official Service
-Metro Faith Official: https://hkmu-hk.campuslabs.com/engage
+Metro Faith Official: https://hkmu-hk.campuslabs.com/engage (NOT our work)
 
 ## Project information
 
